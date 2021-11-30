@@ -24,5 +24,12 @@ class player(object):
             self.placing_value = placing_value
             self.miss_slap_value = miss_slap_value
             self.deck = deck
-        
+            self.memorized_deck = []
+            self.miss_slaps = 0
+            self.slaps = 0
+            self.wins = 0
+            
+            
+            
+            
         
