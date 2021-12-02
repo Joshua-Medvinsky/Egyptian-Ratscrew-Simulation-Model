@@ -10,19 +10,19 @@ Author: Joshua Medvinsky and Daniel Penkov
 import numpy as np
 
 
-class player(object):
+class Player(object):
         """
             This is the player class 
             """
         def __init__(self, player_type, memorization_value, reaction_value, placing_value, 
-                     miss_slap_value, deck):
+                     miss_slap_value):
             self.player_type = player_type
             self.memorization_value = memorization_value
             self.reaction_value = reaction_value
             self.placing_value = placing_value
             #The higher the worse for miss slap value
             self.miss_slap_value = miss_slap_value
-            self.deck = deck
+            self.deck = []
             self.memorized_deck = []
             self.miss_slaps = 0
             self.slaps = 0
@@ -52,4 +52,18 @@ class player(object):
                 self.slaps+=1
                 
             return miss_slap
+        
+        
+        
+        '''
+        Data Collection:
+            
+        Memorization slap times to slap:
+            - joker - 0.2 seconds
+            - joker - 0.16 seconds
+            - joker - 0.2 seconds
+            - joker - 0.23 seconds
+            - joker - 0.18 seconds
+            - 
+        '''
         
