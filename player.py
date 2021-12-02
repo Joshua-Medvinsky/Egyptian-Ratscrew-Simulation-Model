@@ -10,7 +10,7 @@ Author: Joshua Medvinsky and Daniel Penkov
 import numpy as np
 
 
-class player(object):
+class Player(object):
         """
             This is the player class 
             """
@@ -52,4 +52,18 @@ class player(object):
                 self.slaps+=1
                 
             return miss_slap
+        
+        
+        
+        '''
+        Data Collection:
+            
+        Memorization slap times to slap:
+            - joker - 0.2 seconds
+            - joker - 0.16 seconds
+            - joker - 0.2 seconds
+            - joker - 0.23 seconds
+            - joker - 0.18 seconds
+            - 
+        '''
         

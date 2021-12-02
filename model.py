@@ -7,7 +7,7 @@ Author: Joshua Medvinsky and Daniel Penkov
 """
 
 import numpy as np
-import player
+import player as p
 import random
 
 # NOTES
@@ -16,10 +16,12 @@ import random
 # Global variables
 deck_count = 2
 player_types = ["m", "r", "p","d", "m+", "m++"]
+#player_types = ["m", "r", "p"]
+player_count = 3
 rules = ["pair", "sandwich", "bottom_top", "joker", "marriage",
          "divorce", "3_in_a_row"]
-player_array = []
-memorization_range = [2, 10]
+players = []
+memorization_range = [2, 5]
 reaction_range = [7,9]
 placing_range = [2,10]
 memorization_value = 5.6
@@ -30,18 +32,17 @@ placing_value = 2
 
 
 def main():
-    #create_players()    
-    create_shuffled_table_deck()
+    create_players()    
     #while # no player has all cards yet:
     #logic for a single card place 
     # TODO: card is placed
     # TODO: if slap is valid, caclulcate if someone slaps
     # TODO: if non valid, calculate if someone might slap
 
-#def create_players():
-#    for player in len(player_types):
- #       player_array.append(Player(player_types[player]), memorization_value,
- #                               reaction_value, placing_value, miss_slap_value)
+def create_players():
+    for player in len(player_types):
+        players.append(Player(player_types[player]), memorization_value,
+                                reaction_value, placing_value, miss_slap_value)
     
     
 def is_valid_slap(table_deck, rules):
@@ -102,7 +103,7 @@ def are_decreasing(first, second, third):
 def are_increasing(first, second, third):
     return third + 1 == second and second + 1 == first
 
-def create_shuffled_table_deck(): 
+def create_shuffled_game_deck(): 
     table_deck = []
     #Jokers
     table_deck.append(("Joker","Black"))
@@ -110,10 +111,10 @@ def create_shuffled_table_deck():
     #card values list
     card_values = ["Ace","2","3","4","5","6","7","8","9","10","Jack","Queen","King"]
     #suits list
-    Suits = ["Spades","Diamonds","Clubs","Hearts"]
-    for s in Suits:
-        for c in card_values:
-            table_deck.append(tuple((c,s)))
+    suits = ["Spades","Diamonds","Clubs","Hearts"]
+    for suit in suits:
+        for card in card_values:
+            table_deck.append(tuple((card,suit)))
             
     random.shuffle(table_deck)
     #uncomment to see deck
@@ -121,7 +122,42 @@ def create_shuffled_table_deck():
     return table_deck
     
 def sim_one_game(players):
-    return
+    players_left = players
+    game_deck = create_shuffled_game_deck()
+    faceplacer = -1
+    current_player_index = 0
+    for card in game_deck:
+        players_left[current_player_index].deck.append(card)
+        current_player_index = get_next_player_index(current_player_index, players_left)
+    current_player_index = 0
+    for player in players_left:
+        print(player.deck)
     
-def sim_x_games(players, number_of_games):
-    return
+    
+    #while np.size(players_left) > 1 and faceplacer == -1:
+        # TODO: a single card place occurs
+     #   placed_card = players_left[current_player_index]
+        #     TODO: take card from top of current player and put on table deck
+     #   if is_valid_slap(game_deck, rules):
+    '''#TODO: calculate every players chance of getting the slap
+                #TODO:calculate: preslaps, memorization induced slapping
+                    #TODO: if player gets slap or not, calculate every 
+                    #      player's chance of memorizing some cards: jokers, pairs, bottom card
+            #TODO: calculate every players chance of placing down a card'''
+            
+#def more_than_one_player_left(players):
+#    count = 0
+#    for player in players:
+#        if np.size(player.deck) > 0:
+#           count += 1
+#    return count >= 2
+
+def get_next_player_index(current_index, players):
+    if current_index == np.size(players) - 1:
+        return 0
+    else:
+        return current_index + 1
+    
+    
+#def sim_x_games(players, number_of_games):
+    
