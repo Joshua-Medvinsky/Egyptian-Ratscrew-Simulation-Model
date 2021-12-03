@@ -10,7 +10,7 @@ Author: Joshua Medvinsky and Daniel Penkov
 import numpy as np
 
 
-class Player(object):
+class player(object):
         """
             This is the player class 
             """

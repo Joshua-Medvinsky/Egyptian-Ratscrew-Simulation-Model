@@ -27,6 +27,7 @@ placing_range = [2,10]
 memorization_value = 5.6
 reaction_value = 2
 placing_value = 2
+miss_slap_value = 2
 #table_deck = create_shuffled_table_deck()
 # tracking slap sizes by game and level
 
@@ -41,7 +42,7 @@ def main():
 
 def create_players():
     for player in len(player_types):
-        players.append(Player(player_types[player]), memorization_value,
+        players.append(player(player_types[player]), memorization_value,
                                 reaction_value, placing_value, miss_slap_value)
     
     
@@ -126,6 +127,10 @@ def sim_one_game(players):
     game_deck = create_shuffled_game_deck()
     faceplacer = -1
     current_player_index = 0
+    #face card counter
+    face_count = -1
+    #table deck
+    table_deck = []
     for card in game_deck:
         players_left[current_player_index].deck.append(card)
         current_player_index = get_next_player_index(current_player_index, players_left)
@@ -134,11 +139,62 @@ def sim_one_game(players):
         print(player.deck)
     
     
-    #while np.size(players_left) > 1 and faceplacer == -1:
+    while np.size(players_left) > 1 and faceplacer == -1:
+       
         # TODO: a single card place occurs
-     #   placed_card = players_left[current_player_index]
+        current_player_deck = players_left[current_player_index].deck
+        #take card from top
+        placed_card = current_player_deck.pop(np.size(current_player_deck)-1)
         #     TODO: take card from top of current player and put on table deck
-     #   if is_valid_slap(game_deck, rules):
+        table_deck.append(placed_card)
+        
+        if is_valid_slap(game_deck, rules):
+            #garbage placeholder
+            #index of the fastest player
+            fast_I = players_left.index(min(players_left.get_reaction_time()))
+            #index of the next placer
+            nextP= get_next_player_index(current_player_index, players)
+            #time of the next place
+            placeT= players_left[nextP].get_placing_time()
+            #if placing time is faster than reaction time
+            if placeT>players_left[fast_I].get_reaction_time():
+                #What happens when a player gets a slap
+                player_types[fast_I].insert(0, table_deck.reverse())
+                table_deck = []
+                current_player_index  = fast_I
+                face_count = 0
+                print("Player" + str(current_player_index) +"won with a slap")
+                continue                
+        #face card logic
+        
+        if face_count>0:
+             face_count -= 1
+             
+        #Jack
+        
+        face_cards = ["Jack", "Queen", "King", "Ace"]
+        
+        # Checks if current placed card is a face card
+        if face_cards.count(placed_card[0]) == 1:
+            faceplacer = current_player_index
+            face_count = face_cards.index(placed_card) + 1
+            current_player_index = get_next_player_index(current_player_index, players)
+        
+       
+        if face_count == 0:
+            #TODO: give faceplacer
+            player_types[faceplacer].insert(0, table_deck.reverse())
+            table_deck = []
+            current_player_index = faceplacer
+            face_count = -1
+            print("Player" + str(current_player_index) +"won off of face cards")
+            
+        if face_count == -1:
+            #go to next player
+            current_player_index= get_next_player_index(current_player_index, players)
+            
+        
+            
     '''#TODO: calculate every players chance of getting the slap
                 #TODO:calculate: preslaps, memorization induced slapping
                     #TODO: if player gets slap or not, calculate every 
