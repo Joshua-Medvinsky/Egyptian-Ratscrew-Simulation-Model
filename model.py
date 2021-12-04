@@ -36,7 +36,6 @@ def main():
     create_players()    
     #while # no player has all cards yet:
     #logic for a single card place 
-    # TODO: card is placed
     # TODO: if slap is valid, caclulcate if someone slaps
     # TODO: if non valid, calculate if someone might slap
 
@@ -154,21 +153,25 @@ def sim_one_game(players):
         if is_valid_slap(game_deck, rules):
             #garbage placeholder
             #index of the fastest player
-            fast_I = players_left.index(min(players_left[:].get_reaction_time))
-            print("Fast time: " + (str)(fast_I))
+            fast_index = players_left.index(min(players_left[:].get_reaction_time))
+            print("Fast time: " + (str)(fast_index))
             #index of the next placer
             nextP= get_next_player_index(current_player_index, players)
             #time of the next place
             placeT= players_left[nextP].get_placing_time
             #if placing time is faster than reaction time
-            if placeT>players_left[fast_I].get_reaction_time:
+            if placeT>players_left[fast_index].get_reaction_time:
                 #What happens when a player gets a slap
-                player_types[fast_I].insert(0, table_deck.reverse())
+                player_types[fast_index].deck.insert(0, table_deck.reverse())
                 table_deck = []
-                current_player_index  = fast_I
+                if np.size(current_player_deck[current_player_index]) == 0 \
+                            and current_player_index != fast_index:
+                    players_left.remove(current_player_index)
+                current_player_index = fast_index
                 face_count = -1
-                faceplacer=-1
-                print("Player" + str(current_player_index) +"won with a slap")
+                faceplacer = -1
+                print("Player" + str(current_player_index) +"won with a slap")             
+                
                 continue                
         #face card logic
         
@@ -176,9 +179,9 @@ def sim_one_game(players):
              face_count -= 1
         
         # Checks if current placed card is a face card
-        if is_face_card(placed_card[0]):
+        if is_face_card(placed_card):
             faceplacer = current_player_index
-            face_count = ["Jack", "Queen", "King", "Ace"].index(placed_card) + 1
+            face_count = ["Jack", "Queen", "King", "Ace"].index(placed_card[0]) + 1
             current_player_index = get_next_player_index(current_player_index, players)
         
        
@@ -188,22 +191,22 @@ def sim_one_game(players):
        
         if face_count == 0:
             #TODO: give faceplacer
-            player_types[faceplacer].insert(0, table_deck.reverse())
+            player_types[faceplacer].deck.insert(0, table_deck.reverse())
             table_deck = []
             current_player_index = faceplacer
             face_count = -1
             faceplacer = -1
             print("Player" + str(current_player_index) +"won off of face cards")
-        i=0  
+        i = 0  
         for player in players_left:
             if np.size(player.deck) == 0:
-                elimination_index =i
-            i+=1
+                elimination_index = i
+            i += 1
         #elimination_index = players_left.index(np.size(players_left.player.deck) == 0) 
         
-        #if players_left.index(min(np.size(players_left[:].deck) == 0 and 
-         #                             faceplacer != elimination_index :
-         #   players_left.remove(elimination_index)
+        if players_left.index(min(np.size(players_left[:].deck))) == 0 \
+                                and faceplacer != elimination_index:
+            players_left.remove(elimination_index)
         
             
     '''#TODO: calculate every players chance of getting the slap
