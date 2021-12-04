@@ -139,13 +139,19 @@ def sim_one_game(players):
         print("Deck size: " + (str)(np.size(player.deck)/2))
     
     
+
+        
+            
+    print("size: " +(str)(np.size(players_left)))
     while np.size(players_left) > 1:
        
         
+
         # TODO: a single card place occurs
         current_player_deck = players_left[current_player_index].deck
         #take card from top
-        print("Popped Index: " + (str)((np.size(current_player_deck))/2-1))
+        print("Player: " +(str)(current_player_index)+" Popped Index: "  \
+              + (str)((np.size(current_player_deck))/2-1))
         placed_card = current_player_deck.pop((int)(np.size(current_player_deck)/2)-1)
         #     TODO: take card from top of current player and put on table deck
         table_deck.append(placed_card)
@@ -153,16 +159,23 @@ def sim_one_game(players):
         if is_valid_slap(game_deck, rules):
             #garbage placeholder
             #index of the fastest player
-            fast_index = players_left.index(min(players_left[:].get_reaction_time))
+            i = 0
+            fast_time = 0
+            fast_index = 0
+            for player in players_left:
+                if player.get_reaction_time()>fast_time == 0:
+                    fast_index = i
+                    fast_time = player.get_reaction_time()
+                i+=1
             print("Fast time: " + (str)(fast_index))
             #index of the next placer
-            nextP= get_next_player_index(current_player_index, players)
+            nextP = get_next_player_index(current_player_index, players)
             #time of the next place
-            placeT= players_left[nextP].get_placing_time
+            placeT = players_left[nextP].get_placing_time()
             #if placing time is faster than reaction time
-            if placeT>players_left[fast_index].get_reaction_time:
+            if placeT>players_left[fast_index].get_reaction_time():
                 #What happens when a player gets a slap
-                player_types[fast_index].deck.insert(0, table_deck.reverse())
+                players_left[fast_index].deck.insert(0, table_deck.reverse())
                 table_deck = []
                 if np.size(current_player_deck[current_player_index]) == 0 \
                             and current_player_index != fast_index:
@@ -171,7 +184,6 @@ def sim_one_game(players):
                 face_count = -1
                 faceplacer = -1
                 print("Player" + str(current_player_index) +"won with a slap")             
-                
                 continue                
         #face card logic
         
@@ -179,10 +191,13 @@ def sim_one_game(players):
              face_count -= 1
         
         # Checks if current placed card is a face card
+        print("Face count: " + (str)(face_count))
+        print("placed card: " + placed_card[0])
         if is_face_card(placed_card):
             faceplacer = current_player_index
             face_count = ["Jack", "Queen", "King", "Ace"].index(placed_card[0]) + 1
             current_player_index = get_next_player_index(current_player_index, players)
+            print("face")
         
        
         if face_count == -1:
@@ -190,23 +205,25 @@ def sim_one_game(players):
             current_player_index= get_next_player_index(current_player_index, players)
        
         if face_count == 0:
-            #TODO: give faceplacer
-            player_types[faceplacer].deck.insert(0, table_deck.reverse())
+            print(players_left[faceplacer].deck)
+            players_left[faceplacer].deck.insert(0, table_deck.reverse())
             table_deck = []
             current_player_index = faceplacer
             face_count = -1
             faceplacer = -1
             print("Player" + str(current_player_index) +"won off of face cards")
+
         i = 0  
+        elimination_index = 0
         for player in players_left:
             if np.size(player.deck) == 0:
                 elimination_index = i
             i += 1
-        #elimination_index = players_left.index(np.size(players_left.player.deck) == 0) 
         
-        if players_left.index(min(np.size(players_left[:].deck))) == 0 \
-                                and faceplacer != elimination_index:
-            players_left.remove(elimination_index)
+        if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
+            print(elimination_index)
+            print(players_left.deck)
+            players_left.pop(elimination_index)
         
             
     '''#TODO: calculate every players chance of getting the slap
@@ -242,7 +259,14 @@ def empty_deck(player_list):
     for player in player_list:
         player.deck = []
     
+def dummy_players():
     
+    playerOne = p.player("water",5,5,5,5)
+    playerTwo = p.player("fire",5,5,5,5)
+    playerThree = p.player("earth",5,5,5,5)
+    
+    playerList = [playerOne,playerTwo,playerThree]
+    return playerList        
     
 #def sim_x_games(players, number_of_games):
     
