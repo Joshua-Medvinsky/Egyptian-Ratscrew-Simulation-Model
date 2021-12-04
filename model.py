@@ -140,7 +140,11 @@ def sim_one_game(players):
     
     
     while np.size(players_left) > 1 and faceplacer == -1:
-       
+        #removes player from deck if they have no cards
+        if(np.size(players_left.deck)==0):
+            players_left.index(np.size(players_left.deck))
+            #TO DO LOGIC FOR WHEN A PLAYER IS OUT ^^^
+            
         # TODO: a single card place occurs
         current_player_deck = players_left[current_player_index].deck
         #take card from top
