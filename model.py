@@ -33,7 +33,8 @@ miss_slap_value = 2
 
 
 def main():
-    create_players()    
+    create_players() 
+    sim_one_game(players)
     #while # no player has all cards yet:
     #logic for a single card place 
     # TODO: if slap is valid, caclulcate if someone slaps
@@ -138,16 +139,9 @@ def sim_one_game(players):
         print(player.deck)
         print("Deck size: " + (str)(np.size(player.deck)/2))
     
-    
-
-        
-            
     print("size: " +(str)(np.size(players_left)))
     while np.size(players_left) > 1:
        
-        
-
-        # TODO: a single card place occurs
         current_player_deck = players_left[current_player_index].deck
         #take card from top
         print("Player: " +(str)(current_player_index)+" Popped Index: "  \
@@ -156,7 +150,7 @@ def sim_one_game(players):
         #     TODO: take card from top of current player and put on table deck
         table_deck.append(placed_card)
         
-        if is_valid_slap(game_deck, rules):
+        if is_valid_slap(table_deck, rules):
             #garbage placeholder
             #index of the fastest player
             i = 0
