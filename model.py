@@ -141,6 +141,8 @@ def sim_one_game(players):
     
     print("size: " +(str)(np.size(players_left)))
     
+    # TODO: Deal with updating some player count when a player is eliminated
+    # This is currently causing an issue when someone gets out
     while np.size(players_left) > 1:
         
         current_player_deck = players_left[current_player_index].deck
