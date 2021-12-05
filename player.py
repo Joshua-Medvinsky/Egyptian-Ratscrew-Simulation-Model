@@ -32,15 +32,15 @@ class player(object):
         def get_reaction_time(self):
             
             #current rudementary logic (to be changed later)
-            reaction_time = (float)(np.random.randint(5,10)/self.reaction_value)
-            
+            #reaction_time = (float)(np.random.randint(5,10)/self.reaction_value)
+            reaction_time= np.random.randint(1,9)
             return reaction_time
         
         def get_placing_time(self):
             
             #current rudementary logic (to be changed later)
-            placing_time = (float)(np.randint(4,8)/self.placing_value)
-            
+            placing_time = (float)(np.random.randint(4,8)/self.placing_value)
+            placing_time =10
             return placing_time
             
         def miss_slap_occured(self):
