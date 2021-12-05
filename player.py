@@ -14,8 +14,9 @@ class player(object):
         """
             This is the player class 
             """
-        def __init__(self, player_type, memorization_value, reaction_value, placing_value, 
+        def __init__(self, name, player_type, memorization_value, reaction_value, placing_value, 
                      miss_slap_value):
+            self.name = name
             self.player_type = player_type
             self.memorization_value = memorization_value
             self.reaction_value = reaction_value
