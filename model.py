@@ -198,12 +198,16 @@ def sim_one_game(players):
                 print("Current player: " + players_left[current_player_index].name)
                 
                 if np.size(current_player_deck) == 0:
+                    if faceplacer > current_player_index:
+                        faceplacer-=1
+                        
                     players_left.pop(current_player_index)
                     #if you are the last player do not subtract
                     if current_player_index > fast_index:                            
                         current_player_index = fast_index
                     else:
                         current_player_index = fast_index - 1 
+                    
                         
                # current_player_index = fast_index
                 face_count = -1
@@ -212,7 +216,7 @@ def sim_one_game(players):
                 print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
                 print("Current player after index change: " + players_left[current_player_index].name)
                 print(players_left[current_player_index].name + "'s deck: ")
-                print(current_player_deck)
+                print(players_left[current_player_index].deck)
                 continue                
         #face card logic
         
@@ -226,7 +230,7 @@ def sim_one_game(players):
             faceplacer = current_player_index
             face_count = ["Jack", "Queen", "King", "Ace"].index(placed_card[0]) + 1
             current_player_index = get_next_player_index(current_player_index, players_left)
-            print("face")
+            #print("face")
         
        
         if face_count == -1:
@@ -234,6 +238,10 @@ def sim_one_game(players):
             current_player_index= get_next_player_index(current_player_index, players_left)
        
         if face_count == 0:
+            print("CURRENT PLAYER: " + (str)(current_player_index))
+            
+            print("FACE PLACER: " + (str)(faceplacer))
+            
             print(players_left[faceplacer].deck)
             #players_left[faceplacer].deck.insert(0, table_deck.reverse())
             for card in table_deck:
@@ -253,11 +261,14 @@ def sim_one_game(players):
             i += 1
         
         if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
-            print(elimination_index)
-            print(players_left[elimination_index].deck)
+            print("Elimination Index: " + (str)(elimination_index))
+            print("Eliminated Player's deck + " + (str)(players_left[elimination_index].deck))
+            if faceplacer > current_player_index:
+                        faceplacer-=1
             players_left.pop(elimination_index)
             if current_player_index == len(players_left):
                 current_player_index = 0
+            
     
     print(players_left[0].name + " wins!")
     #players_left[0].wins += 1
@@ -277,7 +288,7 @@ def sim_one_game(players):
 #    return count >= 2
 def hundomundo():
     
-    for x in range(100):
+    for x in range(10):
         sim_one_game(dummy_players())
         
 
