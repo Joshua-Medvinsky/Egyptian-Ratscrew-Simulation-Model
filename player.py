@@ -58,6 +58,9 @@ class player(object):
             return miss_slap
         
         
+        #memorization: top/bottom, pairs, joker, sandwich
+        
+        
         
         '''
         Data Collection:
