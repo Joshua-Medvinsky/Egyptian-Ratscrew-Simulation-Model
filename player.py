@@ -28,6 +28,9 @@ class player(object):
             self.miss_slaps = 0
             self.slaps = 0
             self.wins = 0
+            self.slap_cards_gained = 0
+            self.face_cards_gained = 0
+            self.wins = 0
             #pre-slap
             
         def get_reaction_time(self):
