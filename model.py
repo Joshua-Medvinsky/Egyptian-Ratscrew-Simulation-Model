@@ -9,7 +9,9 @@ Author: Joshua Medvinsky and Daniel Penkov
 import numpy as np
 import player as p
 import random
-
+import copy
+import sys, os
+ 
 # NOTES
 # Figure out how to do continous knob turning testing
 
@@ -123,7 +125,7 @@ def create_shuffled_game_deck():
     return table_deck
     
 def sim_one_game(players):
-    players_left = players
+    players_left = copy.copy(players)
     game_deck = create_shuffled_game_deck()
     faceplacer = -1
     current_player_index = 0
@@ -148,12 +150,12 @@ def sim_one_game(players):
         
         print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
         print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
-        current_player_deck = players_left[current_player_index].deck
+      
         #take card from top
-        #print(players_left[current_player_index].name + " Popped Index: "  \
-             # + (str)(len(current_player_deck)-1))
-        placed_card = current_player_deck.pop(len(current_player_deck)-1)
-        #print(players_left[current_player_index].name + "'s deck size: " + (str)(len(current_player_deck)))
+
+        placed_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
+        
+
         #     TODO: take card from top of current player and put on table deck
         table_deck.append(placed_card)
 
@@ -195,15 +197,20 @@ def sim_one_game(players):
                 print("Table Deck: " + (str)(table_deck))
                 print("Before, Player " + players_left[fast_index].name + " :" + (str)(players_left[fast_index].deck))
                 #players_left[fast_index].deck.insert(0, table_deck.reverse())
+                players_left[fast_index].slaps += 1
                 for card in table_deck:
                     players_left[fast_index].deck.insert(0,card)
+                players_left[fast_index].slap_cards_gained+=len(table_deck)
                 print(players_left[fast_index].name + "'s deck size after slap: " + (str)(len(players_left[fast_index].deck)))
                 players_left[fast_index].slaps += 1
                 print("After, Player " + players_left[fast_index].name + " :" + (str)(players_left[fast_index].deck))
                 table_deck = []
                 #print("Current player: " + players_left[current_player_index].name)
                 
-                if np.size(current_player_deck) == 0:
+                #if the current players deck is 0
+                if np.size(players_left[current_player_index].deck) == 0:
+
+
 
                     if faceplacer > current_player_index:
                         faceplacer -= 1
@@ -224,7 +231,15 @@ def sim_one_game(players):
                 print("Current player after index change: " + players_left[current_player_index].name)
                 print(players_left[current_player_index].name + "'s deck: ")
                 print(players_left[current_player_index].deck)
-                continue                
+                continue
+            else:
+                #Scenario in where the placing time is faster than the slap time
+                for i in range(len(players_left)):
+                    if(players_left[i].miss_slap_value==True):
+                        players_left.pop
+                        burn_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
+                        table_deck.insert(0, burn_card)
+                        continue
         #face card logic
         
         if face_count > 0:
@@ -252,7 +267,7 @@ def sim_one_game(players):
             print(players_left[faceplacer].deck)
             for card in table_deck:
                     players_left[faceplacer].deck.insert(0,card)
-            
+            players_left[faceplacer].face_cards_gained+=len(table_deck)
             table_deck = []
             current_player_index = faceplacer
             face_count = -1
@@ -268,6 +283,7 @@ def sim_one_game(players):
         
         if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
             print("Elimination Index: " + (str)(elimination_index))
+            print("Eliminated Player: " + (str)(elimination_index))
             print("Eliminated Player's deck + " + (str)(players_left[elimination_index].deck))
             if faceplacer > current_player_index:
                         faceplacer-=1
@@ -278,8 +294,10 @@ def sim_one_game(players):
     for card in table_deck:
                     players_left[faceplacer].deck.insert(0,card)
     print(players_left[0].name + " wins!")
-    print(players_left[0].name + "'s deck size: " + (str)(len(players_left[0].deck)))
-    #players_left[0].wins += 1
+
+    
+    players_left[0].wins += 1
+
         
             
     '''#TODO: calculate every players chance of getting the slap
@@ -328,6 +346,32 @@ def dummy_players():
     
     playerList = [playerOne,playerTwo,playerThree]
     return playerList        
-    
-#def sim_x_games(players, number_of_games):
-    
+  
+# Disable
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+
+# Restore
+def enablePrint():
+    sys.stdout = sys.__stdout__
+  
+def sim_x_games(number_of_games):
+    x_game_players =dummy_players()
+    reset=x_game_players[:]
+    #reset =copy.copy(x_game_players)
+    #run games x times
+    #blockPrint()
+    for x in range(number_of_games):
+        x_game_players = reset
+        print(len(reset))
+        print(len(x_game_players))
+      
+        sim_one_game(x_game_players)
+        empty_deck(x_game_players)
+     
+    enablePrint()    
+    #print out stats
+    for player in x_game_players:
+        print(player.name + ": Wins: " + (str)(player.wins)+" Slaps: "+ (str)(player.slaps) + \
+              " Slap Cards gained: " +(str)(player.slap_cards_gained) + " Face cards gained: "+ \
+              (str)(player.face_cards_gained))
