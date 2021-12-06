@@ -25,6 +25,7 @@ class player(object):
             self.miss_slap_value = miss_slap_value
             self.deck = []
             self.memorized_deck = []
+            self.memorization_limit = 5
             self.miss_slaps = 0
             self.slaps = 0
             self.wins = 0

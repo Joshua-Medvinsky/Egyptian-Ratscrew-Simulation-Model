@@ -163,6 +163,15 @@ def sim_one_game(players):
             #garbage placeholder
             #print("INSIDE SLAP METHOD")
             #index of the fastest player
+            
+            # memorization check: joker, pair, sandwich, top/bottom
+            for player in players_left:
+                if (len(table_deck) >= 1 and table_deck[-1] == player.memorized_deck[-1]) \
+                    or(len(table_deck) >= 2 and table_deck[-1] == player.memorized_deck[-1])
+                
+                
+            if len(table_deck) >= 3 and table_deck[-1][0] == table_deck[-3][0]:
+            
             i = 0
             fast_index = 0 
             #fast_time = players_left[0].get_reaction_time()
@@ -189,6 +198,7 @@ def sim_one_game(players):
                 for card in table_deck:
                     players_left[fast_index].deck.insert(0,card)
                 print(players_left[fast_index].name + "'s deck size after slap: " + (str)(len(players_left[fast_index].deck)))
+                players_left[fast_index].slaps += 1
                 print("After, Player " + players_left[fast_index].name + " :" + (str)(players_left[fast_index].deck))
                 table_deck = []
                 #print("Current player: " + players_left[current_player_index].name)
