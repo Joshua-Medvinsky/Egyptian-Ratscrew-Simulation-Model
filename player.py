@@ -26,6 +26,7 @@ class player(object):
             self.deck = []
             self.memorized_deck = []
             self.memorization_limit = 5
+            self.memorization_chance = 50
             self.miss_slaps = 0
             self.slaps = 0
             self.wins = 0
@@ -45,7 +46,7 @@ class player(object):
             
             #current rudementary logic (to be changed later)
             placing_time = (float)(np.random.randint(4,8)/self.placing_value)
-            placing_time =100000
+            placing_time = 100000
             return placing_time
             
         def miss_slap_occured(self):
@@ -60,6 +61,8 @@ class player(object):
         
         
         #memorization: top/bottom, pairs, joker, sandwich
+        #def build_player_memorization(self):
+            
         
         
         

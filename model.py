@@ -20,7 +20,7 @@ deck_count = 2
 player_types = ["m", "r", "p","d", "m+", "m++"]
 #player_types = ["m", "r", "p"]
 player_count = 3
-rules = ["pair", "sandwich", "bottom_top", "joker", "marriage",
+rules = ["pair", "sandwich", "top_bottom", "joker", "marriage",
          "divorce", "3_in_a_row"]
 players = []
 memorization_range = [2, 5]
@@ -35,7 +35,7 @@ miss_slap_value = 2
 
 
 def main():
-    create_players() 
+    create_players()
     sim_one_game(players)
     #while # no player has all cards yet:
     #logic for a single card place 
@@ -51,25 +51,31 @@ def create_players():
 def is_valid_slap(table_deck, rules):
     if rules.count("pair") > 0:
         if len(table_deck) >= 2 and table_deck[-1][0] == table_deck[-2][0]:
+            # Slap is a pair
             return True
-    if rules.count('sandwich') > 0:
+    if rules.count("sandwich") > 0:
         if len(table_deck) >= 3 and table_deck[-1][0] == table_deck[-3][0]:
+            # Slap is a sandwich
             return True
-    if rules.count('bottom_top') > 0:
+    if rules.count("top_bottom") > 0:
         if len(table_deck) >= 2 and table_deck[-1][0] == table_deck[0][0]:
+            # Slap is top/bottom
             return True
-    if rules.count('joker') > 0:
+    if rules.count("joker") > 0:
         if table_deck[-1][0] == "Joker":
+            # Slap is a joker
             return True
-    if rules.count('marriage') > 0:
+    if rules.count("marriage") > 0:
         if len(table_deck) >= 2 and ((table_deck[-1][0] == "Queen" and table_deck[-2][0] == "King")
                                      or (table_deck[-1][0] == "King" and table_deck[-2][0] == "Queen")):
+            # Slap is marriage
             return True
-    if rules.count('divorce') > 0:
+    if rules.count("divorce") > 0:
         if len(table_deck) >= 3 and ((table_deck[-1][0] == "Queen" and table_deck[-3][0] == "King")
                                      or (table_deck[-1][0] == "King" and table_deck[-3][0] == "Queen")):
+            # Slap is divorce
             return True
-    if rules.count('3_in_a_row') > 0:
+    if rules.count("3_in_a_row") > 0:
         if len(table_deck) >= 3:  
             face_cards = {
                     "Jack": 11,
@@ -97,6 +103,7 @@ def is_valid_slap(table_deck, rules):
                 third = float(face_cards.get(table_deck[-3][0]))
     
             if are_decreasing(first, second, third) or are_increasing(first, second, third):
+                # Slap is 3 in a row
                 return True        
     return False
     
@@ -164,14 +171,42 @@ def sim_one_game(players):
         if is_valid_slap(table_deck, rules):
             #print("INSIDE SLAP METHOD")
             
-            # memorization check: joker, pair, sandwich, top/bottom
+            # ---------- Utilizing memorized cards logic ----------
+            # memorization check: joker, pair, top/bottom
             for player in players_left:
-                if (len(table_deck) >= 1 and table_deck[-1] == player.memorized_deck[-1]) \
-                    or(len(table_deck) >= 2 and table_deck[-1] == player.memorized_deck[-1])
+                # Joker is remembered
+                if len(table_deck) >= 1 and len(player.memorized_deck) >= 1 and \
+                    table_deck[-1][0] == "Joker" and \
+                    player.memorized_deck.count(table_deck[-1]) == 1:
+                    print(player.name + " memorized the joker and slapped!")
+                    # TODO: calculate if they slap
+                    player.memorized_deck = []
+                    # TODO: remove cards from memorization deck
+                # Pair is remembered
+                elif len(table_deck) >= 2 and len(player.memorized_deck) >= 2 and \
+                    table_deck[-1][0] == table_deck[-2][0] and \
+                    player.memorized_deck.count(table_deck[-1]) == 1:
+                    pair_card = table_deck[-1]
+                    card_value = pair_card[0]
+                    card_index = player.memorized_deck.index(pair_card)
+                    if card_index < len(player.memorized_deck) - 1 and \
+                        card_value == player.memorized_deck[card_index + 1][0]:
+                        print(player.name + " memorized the pair of " + (str)(card_value) + "'s and slapped!") 
+                        # TODO: calculate if they slap
+                        player.memorized_deck = []
+                        # TODO: remove cards from memorization deck
+                # Top/Bottom is remembered
+                elif len(table_deck) >= 2 and len(player.memorized_deck) >= 1 and \
+                    table_deck[-1][0] == table_deck[0][0]:
+                    target_card = (table_deck[0][0], "top/bottom")
+                    card_value = target_card[0]
+                    if player.memorized_deck.count(target_card) == 1:
+                        print(player.name + " memorized the top/bottom " + (str)(card_value) + "'s and slapped!")
+                        # TODO: calculate if they slap
+                        player.memorized_deck = []
+                        # TODO: remove cards from memorization deck
+
                 
-                
-            if len(table_deck) >= 3 and table_deck[-1][0] == table_deck[-3][0]:
-            
             i = 0
             #index of the fastest player
             fast_index = 0 
@@ -199,21 +234,47 @@ def sim_one_game(players):
                 players_left[fast_index].slaps += 1
                 for card in table_deck:
                     players_left[fast_index].deck.insert(0,card)
-                players_left[fast_index].slap_cards_gained+=len(table_deck)
+                    
+                players_left[fast_index].slap_cards_gained += len(table_deck)
                 print(players_left[fast_index].name + "'s deck size after slap: " + (str)(len(players_left[fast_index].deck)))
                 players_left[fast_index].slaps += 1
                 print("After, Player " + players_left[fast_index].name + " :" + (str)(players_left[fast_index].deck))
+                
+        # -------------------- Memorization logic --------------------
+                cards_to_memorize = []
+                # Slap is pair or joker
+                if len(table_deck) >= 2 and (table_deck[-1][0] == table_deck[-2][0] or \
+                    table_deck[-1][0] == "Joker"):
+                    cards_to_memorize.append(table_deck[-1])
+                    cards_to_memorize.append(table_deck[-2])
+                # Slap is top/bottom
+                if len(table_deck) >= 2 and table_deck[-1][0] == table_deck[0][0]:
+                    card = table_deck[0]
+                    new_card = (card[0], "top/bottom")
+                    cards_to_memorize.append(new_card)
+                #Every player has the chance to memorize the slap cards
+                for player in players_left:
+                    #Checks if player has enough memorization capacity
+                    if (player.memorization_limit - \
+                        len(player.memorized_deck)) >= len(cards_to_memorize):
+                        if (float)(np.random.randint(0,100)) >= player.memorization_chance:
+                            print("Slap has been memorized!")
+                            for card in cards_to_memorize:
+                                player.memorized_deck.insert(0, card)
+                            print(player.name + "'s memorization deck: " + (str)(player.memorized_deck))
+                                
+        # --------------------------------------------------------------
+                                
+                                
                 table_deck = []
                 #print("Current player: " + players_left[current_player_index].name)
                 
                 #if the current players deck is 0
                 if np.size(players_left[current_player_index].deck) == 0:
 
-
-
                     if faceplacer > current_player_index:
                         faceplacer -= 1
-                        
+                    #current player is eliminated
                     players_left.pop(current_player_index)
                     #if you are the last player do not subtract
                     if current_player_index > fast_index:                            
@@ -291,14 +352,10 @@ def sim_one_game(players):
                 current_player_index = 0
         
     for card in table_deck:
-                    players_left[faceplacer].deck.insert(0,card)
+        players_left[faceplacer].deck.insert(0,card)
     print(players_left[0].name + " wins!")
-
-    
     players_left[0].wins += 1
 
-        
-            
     '''#TODO: calculate every players chance of getting the slap
                 #TODO:calculate: preslaps, memorization induced slapping
                     #TODO: if player gets slap or not, calculate every 
