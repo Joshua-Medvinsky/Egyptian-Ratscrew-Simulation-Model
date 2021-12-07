@@ -11,10 +11,6 @@ import player as p
 import random
 import copy
 
- 
-# NOTES
-# Figure out how to do continous knob turning testing
-
 # Global variables
 deck_count = 1
 player_types = ["m", "r", "p","d", "m+", "m++"]
@@ -30,10 +26,9 @@ memorization_value = 5.6
 reaction_value = 2
 placing_value = 2
 miss_slap_value = 2
-#table_deck = create_shuffled_table_deck()
 # tracking slap sizes by game and level
-
 # graph of turns vs amount of decks over 10000 games
+
 def main():
     create_players()
     sim_one_game(players)
@@ -85,7 +80,6 @@ def is_valid_slap(table_deck, rules):
             first = ""
             second = ""
             third = ""
-            print(table_deck)
             try:
                 first = float(table_deck[-1][0])
             except ValueError:
@@ -112,7 +106,7 @@ def are_decreasing(first, second, third):
 def are_increasing(first, second, third):
     return third + 1 == second and second + 1 == first
 
-def create_shuffled_game_deck():  #TEST COMMENT
+def create_shuffled_game_deck():
     table_deck = []
     #Jokers
     table_deck.append(("Joker","Black"))
@@ -152,17 +146,22 @@ def sim_one_game(players):
 
     #runs while there are more than 1 players left in the game
     while np.size(players_left) > 1:
-        print("Players left: " + (str)(np.size(players_left)))
         for player in players_left:
-            print((str)(player.name) + ": " + (str)(player.deck))
+            print(player.name + ": " + (str)(player.deck))
+            print()
+        print()
+        print("Table deck: " + (str)(table_deck))
         
-        print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
-        print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
+        #print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
+        #print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
       
         #take card from top of current player
         placed_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
         #add card to table deck
         table_deck.append(placed_card)
+        print()
+        print(players_left[current_player_index].name + \
+              " places a card: " + (str)(placed_card))
 
         #checks if the current slap is valid
         if is_valid_slap(table_deck, rules):
@@ -208,7 +207,7 @@ def sim_one_game(players):
             fast_time = 10000000
             for player in players_left:
                 reaction_time = player.get_reaction_time()
-                print(player.name + "'s reaction time: " + (str)(reaction_time))
+                #print(player.name + "'s reaction time: " + (str)(reaction_time))
                 if reaction_time < fast_time:
                     fast_index = i
                     fast_time = reaction_time
@@ -221,18 +220,15 @@ def sim_one_game(players):
             if place_time > fast_time:
                 #What happens when a player gets a slap
                 print(players_left[fast_index].name + " SLAPPED") 
-                print(players_left[fast_index].name + "'s deck size before slap: " + (str)(len(players_left[fast_index].deck)))
                 print("Table Deck: " + (str)(table_deck))
-                print("Before, Player " + players_left[fast_index].name + " :" + (str)(players_left[fast_index].deck))
                 #players_left[fast_index].deck.insert(0, table_deck.reverse())
                 players_left[fast_index].slaps += 1
                 for card in table_deck:
                     players_left[fast_index].deck.insert(0,card)
                     
                 players_left[fast_index].slap_cards_gained += len(table_deck)
-                print(players_left[fast_index].name + "'s deck size after slap: " + (str)(len(players_left[fast_index].deck)))
                 players_left[fast_index].slaps += 1
-                print("After, Player " + players_left[fast_index].name + " :" + (str)(players_left[fast_index].deck))
+                print(players_left[fast_index].name + " deck after slap:" + (str)(players_left[fast_index].deck))
                 
         # -------------------- Memorization logic --------------------
                 cards_to_memorize = []
@@ -252,20 +248,21 @@ def sim_one_game(players):
                     if (player.memorization_limit - \
                         len(player.memorized_deck)) >= len(cards_to_memorize):
                         if (float)(np.random.randint(0,100)) >= player.memorization_chance:
-                            print("Slap has been memorized!")
+                            #print("Slap has been memorized!")
                             for card in cards_to_memorize:
                                 player.memorized_deck.insert(0, card)
-                            print(player.name + "'s memorization deck: " + (str)(player.memorized_deck))
+                            #print(player.name + "'s memorization deck: " + (str)(player.memorized_deck))
                                 
         # --------------------------------------------------------------
                                 
-                                
                 table_deck = []
-                #print("Current player: " + players_left[current_player_index].name)
                 
+        # ---------- Updating index logic if player is eliminated ---------
                 #if the current players deck is 0
                 if np.size(players_left[current_player_index].deck) == 0:
-
+                    print()
+                    print("Eliminated Player: " + \
+                          (str)(players_left[current_player_index].name))
                     if faceplacer > current_player_index:
                         faceplacer -= 1
                     #current player is eliminated
@@ -276,18 +273,13 @@ def sim_one_game(players):
                     else:
                         current_player_index = fast_index - 1 
                     
-                        
-               # current_player_index = fast_index
                 face_count = -1
                 faceplacer = -1
-                print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
-                print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
-                print("Current player after index change: " + players_left[current_player_index].name)
-                print(players_left[current_player_index].name + "'s deck: ")
-                print(players_left[current_player_index].deck)
                 continue
             else:
                 
+                
+        # -------------------- Misslap logic --------------------
                 #check if any players have empty decks before burn
                 i = 0  
                 elimination_index = 0
@@ -298,7 +290,6 @@ def sim_one_game(players):
                 #checks if the player has 0 cards and placed a face card last
                 if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
                     print("Eliminated Player: " + (str)(players_left[elimination_index].name))
-
                     if faceplacer > current_player_index:
                         faceplacer-=1
                     players_left.pop(elimination_index)
@@ -311,17 +302,14 @@ def sim_one_game(players):
                 #Scenario in where the placing time is faster than the slap time
                 for player_i in players_left:
                     if(player_i.miss_slap_occured()==True):
-                        print("Table deck before burn: ")
                         player_i.miss_slaps+=1
-                        print(table_deck)
       
                         burn_card = player_i.deck.pop(len(player_i.deck)-1)
                         table_deck.insert(0, burn_card)
                         print(player_i.name + " miss-slapped")
-                        print("Card burned: " +burn_card[0]+" "+burn_card[1] )
-                        print("Table deck after burn: ")
-                        print(table_deck)
-        #face card logic
+                        print("Card burned: " + (str)(burn_card))
+        
+        # -------------------- Face card logic --------------------
         
         if face_count > 0:
              face_count -= 1
@@ -360,14 +348,13 @@ def sim_one_game(players):
         
         #removes player from the game if they run out of cards and the last card they placed was a number
         if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
-            
             print("Eliminated Player: " + (str)(elimination_index))
-
             if faceplacer > current_player_index:
                         faceplacer-=1
             players_left.pop(elimination_index)
             if current_player_index == len(players_left):
                 current_player_index = 0
+        print()
     #inserts the cards to winner once the game ends    
     for card in table_deck:
         players_left[faceplacer].deck.insert(0,card)
@@ -424,10 +411,11 @@ def sim_x_games(number_of_games):
         #empty deck
         empty_deck(x_game_players)
      
-       
     #print out stats
     for player in x_game_players:
         print(player.name + ":") 
-        print("Wins: " + (str)(player.wins)+" Slaps: "+ (str)(player.slaps) + \
-              " Slap Cards gained: " +(str)(player.slap_cards_gained) + " Face cards gained: "+ \
-              (str)(player.face_cards_gained)+ " Misslaps: " + (str)(player.miss_slaps))
+        print("    Wins: " + (str)(player.wins))
+        print("    Slaps: "+ (str)(player.slaps))
+        print("    Slap Cards gained: " + (str)(player.slap_cards_gained))
+        print("    Face cards gained: " + (str)(player.face_cards_gained))
+        print("    Misslaps: " + (str)(player.miss_slaps))
