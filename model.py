@@ -112,7 +112,7 @@ def are_decreasing(first, second, third):
 def are_increasing(first, second, third):
     return third + 1 == second and second + 1 == first
 
-def create_shuffled_game_deck(): 
+def create_shuffled_game_deck():  #TEST COMMENT
     table_deck = []
     #Jokers
     table_deck.append(("Joker","Black"))
