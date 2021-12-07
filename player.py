@@ -38,21 +38,22 @@ class player(object):
             
             #current rudementary logic (to be changed later)
             #reaction_time = (float)(np.random.randint(5,10)/self.reaction_value)
-            reaction_time= (float)(np.random.randint(0,1000))
+            high_end = self.reaction_value*100
+            reaction_time= (float)(np.random.randint(0,1000-high_end))
             return reaction_time
         
         def get_placing_time(self):
-            
+            value_modifier = self.placing_value
             #current rudementary logic (to be changed later)
-            placing_time = (float)(np.random.randint(4,8)/self.placing_value)
-            placing_time =100000
+            placing_time = (float)(np.random.randint(100,1200-value_modifier))
+            #placing_time =300
             return placing_time
             
         def miss_slap_occured(self):
             #I like this logic, 10% is reasonable
             miss_slap = False
             
-            if np.random.randint(0,100) < self.miss_slap_value:
+            if np.random.randint(0,100) < self.miss_slap_value*5:
                 miss_slap = True
                 self.slaps+=1
                 
