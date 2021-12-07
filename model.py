@@ -162,9 +162,7 @@ def sim_one_game(players):
         #print("GAME DECK: " + table_deck)
         
         if is_valid_slap(table_deck, rules):
-            #garbage placeholder
             #print("INSIDE SLAP METHOD")
-            #index of the fastest player
             
             # memorization check: joker, pair, sandwich, top/bottom
             for player in players_left:
@@ -175,6 +173,7 @@ def sim_one_game(players):
             if len(table_deck) >= 3 and table_deck[-1][0] == table_deck[-3][0]:
             
             i = 0
+            #index of the fastest player
             fast_index = 0 
             #fast_time = players_left[0].get_reaction_time()
             fast_time = 10000000
