@@ -162,9 +162,29 @@ def sim_one_game(players):
         print()
         print(players_left[current_player_index].name + \
               " places a card: " + (str)(placed_card))
-
+        place_time_quicker = False
+        
+        i = 0
+        #index of the fastest player
+        fast_index = 0 
+        #fast_time = players_left[0].get_reaction_time()
+        fast_time = 10000000
+        for player in players_left:
+            reaction_time = player.get_reaction_time()
+            #print(player.name + "'s reaction time: " + (str)(reaction_time))
+            if reaction_time < fast_time:
+                fast_index = i
+                fast_time = reaction_time
+            i+=1
+        #index of the next placer
+        next_player = get_next_player_index(current_player_index, players_left)
+        #time of the next place
+        place_time = players_left[next_player].get_placing_time()
+        #if reaction time is faster than place time
+        if(place_time>fast_time):  place_time_quicker = True
         #checks if the current slap is valid
         if is_valid_slap(table_deck, rules):
+            
             #print("INSIDE SLAP METHOD")           
             # ---------- Utilizing memorized cards logic ----------
             for player in players_left:
@@ -200,24 +220,9 @@ def sim_one_game(players):
                         player.memorized_deck = []
                         # TODO: remove cards from memorization deck
 
-            i = 0
-            #index of the fastest player
-            fast_index = 0 
-            #fast_time = players_left[0].get_reaction_time()
-            fast_time = 10000000
-            for player in players_left:
-                reaction_time = player.get_reaction_time()
-                #print(player.name + "'s reaction time: " + (str)(reaction_time))
-                if reaction_time < fast_time:
-                    fast_index = i
-                    fast_time = reaction_time
-                i+=1
-            #index of the next placer
-            next_player = get_next_player_index(current_player_index, players_left)
-            #time of the next place
-            place_time = players_left[next_player].get_placing_time()
-            #if placing time is faster than reaction time
+            
             if place_time > fast_time:
+                
                 #What happens when a player gets a slap
                 print(players_left[fast_index].name + " SLAPPED") 
                 print("Table Deck: " + (str)(table_deck))
@@ -277,38 +282,123 @@ def sim_one_game(players):
                 faceplacer = -1
                 continue
             else:
-                
-                
+                place_time_quicker = True
+                #misslap cannot occur on a empty deck
+                #if np.size(table_deck)==0:
+                 #   continue
+        if place_time_quicker == True:    
         # -------------------- Misslap logic --------------------
                 #check if any players have empty decks before burn
-                i = 0  
-                elimination_index = 0
-                for player in players_left:
-                    if np.size(player.deck) == 0:
-                        elimination_index = i
-                    i += 1
+            i = 0  
+            elimination_index = 0
+            for player in players_left:
+                if np.size(player.deck) == 0:
+                    elimination_index = i
+                i += 1
+                #print(players_left[elimination_index].name)
+                #print("face placer: " + players_left[faceplacer].name)
                 #checks if the player has 0 cards and placed a face card last
-                if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
-                    print("Eliminated Player: " + (str)(players_left[elimination_index].name))
-                    if faceplacer > current_player_index:
-                        faceplacer-=1
-                    players_left.pop(elimination_index)
-                    if current_player_index == len(players_left):
-                        current_player_index = 0
+            if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
+                print("Eliminated Player: " + (str)(players_left[elimination_index].name))
+                if faceplacer > current_player_index:
+                    faceplacer-=1
+                players_left.pop(elimination_index)
+                if current_player_index == len(players_left):
+                    current_player_index = 0
                                
                                                         
                 
-                
+                #return_to_start=False
                 #Scenario in where the placing time is faster than the slap time
-                for player_i in players_left:
-                    if(player_i.miss_slap_occured()==True):
+                
+                # have an outer if statement checking every reaction
+            temp_list = []
+            reaction_time = 0
+            #large constant
+            fast_time = 10000000
+            bool_list = []
+            for player_i in players_left:
+                miss_slap_bool = player_i.miss_slap_occured()
+                bool_list.append(miss_slap_bool)
+                
+                        
+                reaction_time = player_i.get_reaction_time()
+                #print(player.name + "'s reaction time: " + (str)(reaction_time))
+                if reaction_time < fast_time:
+                    fast_index = i
+                    fast_time = reaction_time
+                    i+=1
+                if miss_slap_bool:
+                    temp_list.append(tuple((player_i,fast_time)))
+                    miss_slapper = player_i
+            fast_time=1000000
+                
+            for player_i in temp_list:
+                if player_i[1]> fast_time:
+                    miss_slapper = player_i
+                
+            print(not is_valid_slap(table_deck, rules))         
+            print(any(bool_list))
+            if (is_valid_slap(table_deck, rules)) ==False and any(bool_list):
+                miss_slapper.miss_slaps+=1
+                print("IN 2--------------------------------------------------")
+                burn_card = miss_slapper.deck.pop(len(miss_slapper.deck)-1)
+                table_deck.insert(0, burn_card)
+                print(miss_slapper.name + " miss-slapped")
+                print("Card burned: " + (str)(burn_card))         
+            #checks if this was a valid slap and someone miss-slaps   
+            if is_valid_slap(table_deck, rules) and any(bool_list):   
+                print(miss_slapper.name + " SLAPPED") 
+                print("Table Deck: " + (str)(table_deck))
+                miss_slapper.slaps += 1
+                for card in table_deck:
+                    miss_slapper.deck.insert(0,card)
+                print("IN 1--------------------------------------------------")
+                miss_slapper.slap_cards_gained += len(table_deck)
+                miss_slapper.slaps += 1
+                face_count = -1
+                faceplacer = -1
+                table_deck = []
+                                
+                continue                 
+                    
+            """
+                    return_to_start=False
+                    miss_slap_bool = player_i.miss_slap_occured()
+                    if(miss_slap_bool==True):
+                        if is_valid_slap(table_deck, rules):
+                            
+                            print(player_i.name + " SLAPPED") 
+                            print("Table Deck: " + (str)(table_deck))
+                            player_i.slaps += 1
+                            for card in table_deck:
+                                player_i.deck.insert(0,card)
+                            print("IN 1--------------------------------------------------")
+                            player_i.slap_cards_gained += len(table_deck)
+                            player_i.slaps += 1
+                            face_count = -1
+                            faceplacer = -1
+                            
+                            return_to_start = True
+                            if is_valid_slap(table_deck, rules):
+                                table_deck = []
+                                
+                            continue
                         player_i.miss_slaps+=1
-      
+                        print("IN 2--------------------------------------------------")
                         burn_card = player_i.deck.pop(len(player_i.deck)-1)
                         table_deck.insert(0, burn_card)
                         print(player_i.name + " miss-slapped")
                         print("Card burned: " + (str)(burn_card))
-        
+                        return_to_start =False    
+                        break 
+                        if(return_to_start==True):
+                            print("returning to start")
+                            return_to_start=False
+                            """
+                    
+                        
+                
         # -------------------- Face card logic --------------------
         
         if face_count > 0:

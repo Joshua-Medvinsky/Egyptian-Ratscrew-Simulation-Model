@@ -40,13 +40,13 @@ class player(object):
             #current rudementary logic (to be changed later)
             #reaction_time = (float)(np.random.randint(5,10)/self.reaction_value)
             high_end = self.reaction_value*100
-            reaction_time= (float)(np.random.randint(0,1000-high_end))
+            reaction_time= (float)(np.random.randint(100,1000-high_end))
             return reaction_time
         
         def get_placing_time(self):
             value_modifier = self.placing_value
             #current rudementary logic (to be changed later)
-            placing_time = (float)(np.random.randint(100,1200-value_modifier))
+            placing_time = (float)(np.random.randint(100,200-value_modifier))
             #placing_time =300
             return placing_time
             
@@ -59,7 +59,7 @@ class player(object):
                 self.slaps+=1
                 
             return miss_slap
-        
+            #return True
         
         #memorization: top/bottom, pairs, joker, sandwich
         #def build_player_memorization(self):
