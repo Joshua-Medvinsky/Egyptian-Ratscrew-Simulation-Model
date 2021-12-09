@@ -295,8 +295,8 @@ def sim_one_game(players):
                 if np.size(player.deck) == 0:
                     elimination_index = i
                 i += 1
-                #print(players_left[elimination_index].name)
-                #print("face placer: " + players_left[faceplacer].name)
+                print(players_left[elimination_index].name)
+                print("face placer: " + players_left[faceplacer].name)
                 #checks if the player has 0 cards and placed a face card last
             if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
                 print("Eliminated Player: " + (str)(players_left[elimination_index].name))
@@ -305,6 +305,7 @@ def sim_one_game(players):
                 players_left.pop(elimination_index)
                 if current_player_index == len(players_left):
                     current_player_index = 0
+                elimination_index=0
                                
                                                         
                 
@@ -339,13 +340,7 @@ def sim_one_game(players):
                 
             print(not is_valid_slap(table_deck, rules))         
             print(any(bool_list))
-            if (is_valid_slap(table_deck, rules)) ==False and any(bool_list):
-                miss_slapper.miss_slaps+=1
-                print("IN 2--------------------------------------------------")
-                burn_card = miss_slapper.deck.pop(len(miss_slapper.deck)-1)
-                table_deck.insert(0, burn_card)
-                print(miss_slapper.name + " miss-slapped")
-                print("Card burned: " + (str)(burn_card))         
+                     
             #checks if this was a valid slap and someone miss-slaps   
             if is_valid_slap(table_deck, rules) and any(bool_list):   
                 print(miss_slapper.name + " SLAPPED") 
@@ -360,8 +355,24 @@ def sim_one_game(players):
                 faceplacer = -1
                 table_deck = []
                                 
-                continue                 
+                continue
+                     
+            #ignore a miss slap on a face placer with 0 cards  
+            if np.size(players_left[elimination_index].deck) == 0 and faceplacer == elimination_index:
+                break
+            if (is_valid_slap(table_deck, rules)) ==False and any(bool_list):
+                miss_slapper.miss_slaps+=1
+                print("IN 2--------------------------------------------------")
+                #dont pop if at 0
+                if(miss_slapper==0 and faceplacer!= elimination_index):
+                    print("Josh's special check")
+                    players_left.pop(miss_slapper)
+                if(miss_slapper.deck!=0):
                     
+                    burn_card = miss_slapper.deck.pop(len(miss_slapper.deck)-1)
+                    table_deck.insert(0, burn_card)
+                print(miss_slapper.name + " miss-slapped")
+                print("Card burned: " + (str)(burn_card))        
             """
                     return_to_start=False
                     miss_slap_bool = player_i.miss_slap_occured()
