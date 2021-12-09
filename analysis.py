@@ -217,7 +217,7 @@ def analyzing_average_slap_size_vs_game_stage():
         if i != 5:
             player_list.append(adding_list[i])
         
-    plt.title("Analyzing game stage vs largest average slap")
+    plt.title("Analyzing game stage vs average slap size")
     plt.xlabel("Amount of players (Game stage)")
     plt.ylabel("Average slap size")
 
@@ -232,19 +232,21 @@ def analyzing_which_skill_beats_the_rest():
     playerFour = p.player("Player 4", "fire",5,5,5,0)
     
     playerList = [playerOne,playerTwo,playerThree, playerFour]
-    reaction_wins =[]
-    memorization_wins=[]
-    placing_wins=[]
-    miss_slap_wins =[]
-    #x=1000
-    m.sim_x_games(500, playerList)
-    data = {'Memorization':{1:playerList[0].wins},'Reaction':{1:playerList[1].wins},\
-            'Placing':{1:playerList[2].wins},'Miss Slap': {1:playerList[3].wins}}
 
-    df = pd.DataFrame(data)
-
-    df.plot(kind='bar')
-
+ 
+    m.sim_x_games(1000, playerList)
+    data = {'Memorization':playerList[0].wins/10,'Reaction':playerList[1].wins/10,\
+            'Placing':playerList[2].wins/10,'Miss Slap':playerList[3].wins/10}
+    skills = list(data.keys())
+    wins = list(data.values())
+   
+    #fig = plt.figure(figsize = (12, 8))
+    # creating the bar plot
+    plt.bar(skills, wins, color ='maroon',  width = 0.4)
+    plt.xlabel("Skills")
+    plt.ylabel("Win %")
+    plt.title("Most effective skill")
+    plt.show()
     plt.show()
     
     """    
