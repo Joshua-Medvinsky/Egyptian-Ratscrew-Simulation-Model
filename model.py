@@ -550,9 +550,8 @@ def dummy_players():
     playerOne = p.player("Player 1",5,5,5,5)
     playerTwo = p.player("Player 2",5,5,5,5)
     playerThree = p.player("Player 3",5,5,5,5)
-    playerFour = p.player("Player 4",5,5,5,5)
     
-    playerList = [playerOne,playerTwo,playerThree,playerFour]
+    playerList = [playerOne,playerTwo,playerThree]
     return playerList        
   
 def sim_x_games(number_of_games,x_game_players):
