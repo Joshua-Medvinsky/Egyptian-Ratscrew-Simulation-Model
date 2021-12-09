@@ -21,22 +21,24 @@ import matplotlib.pyplot as plt
 def analyzing_memorization_skill_affect_on_win_favorability():
     win_list=[]
     memorization_list=[]
-    for i in range(11):
-        
-        playerOne = p.player("Player 1", "water",i,5,5,5)
+    for i in range(101):
+        current_value = i /10
+        playerOne = p.player("Player 1", "water",10,5,5,5)
         playerTwo = p.player("Player 2", "fire",5,5,5,5)
         playerThree = p.player("Player 3", "earth",5,5,5,5)
+        playerFour = p.player("Player 4", "earth",5,5,5,5)
     
-        playerList = [playerOne,playerTwo,playerThree]
-        #playerOne.reaction_value = i
+        playerList = [playerOne,playerTwo,playerThree,playerFour]
         m.sim_x_games(100,playerList)
         
-    
         win_list.append(playerOne.wins)
         memorization_list.append(playerOne.memorization_value)
     plt.title("Analyzing memorization skills affect on wins")
     print(memorization_list)
-    plt.xlabel("Memorization skill")
+
+
+    plt.xlabel("Memorization skill value")
+
     plt.ylabel("Wins")
 
     plt.plot(memorization_list,win_list)
@@ -160,6 +162,32 @@ def analyzing_amount_of_player_vs_turns():
     plt.plot(player_count,turns_list)
     plt.show()
     
+
+
+    
+def analyzing_placing_skill_affect_on_win_favorability():
+    win_list=[]
+    placing_list=[]
+    for i in range(101):
+        current_value = i / 10
+        playerOne = p.player("Player 1", "water",5,5,i,5)
+        playerTwo = p.player("Player 2", "fire",1,1,1,1)
+        playerThree = p.player("Player 3", "earth",1,1,1,1)
+        playerFour = p.player("Player 4", "earth",1,1,1,1)
+    
+        playerList = [playerOne,playerTwo,playerThree,playerFour]
+        m.sim_x_games(100,playerList)
+        
+        win_list.append(playerOne.wins)
+        placing_list.append(playerOne.placing_value)
+    plt.title("Analyzing placing skills affect on wins")
+    print(placing_list)
+    plt.xlabel("Placing skill value")
+    plt.ylabel("Wins")
+
+    plt.plot(placing_list,win_list)
+    plt.show()
+
 def analyzing_average_slap_size_vs_game_stage():
     playerOne = p.player("Player 1", "water",5,5,5,5)
     playerTwo = p.player("Player 2", "fire",5,5,5,5)
@@ -168,7 +196,6 @@ def analyzing_average_slap_size_vs_game_stage():
     playerFive = p.player("Player 5", "fire",5,5,5,5)
     playerSix = p.player("Player 6", "fire",5,5,5,5)
     playerSeven = p.player("Player 7", "fire",5,5,5,5)
-
     player_list = [playerOne,playerTwo]
     adding_list = [playerThree,playerFour,playerFive,playerSix,playerSeven]
     #player and turns list
