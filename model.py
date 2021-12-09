@@ -4,6 +4,7 @@
 CSS 458: Fundamentals of Computer Simulation
 Class Final Project
 Author: Joshua Medvinsky and Daniel Penkov
+File: model.py
 """
 
 import numpy as np
@@ -122,8 +123,12 @@ def sim_one_game(players,num_games):
         This method lays out the logic for all game mechanics we have implemented: 
             - Face Card Rules
             - Slaps
+            - Misslaps
             - Player Reaction
-            - Player Memorization'''
+            - Player Memorization
+            - Player Card Placing
+            - Player Elimination
+    '''
     global turns
     players_left = copy.copy(players)
     game_deck = create_shuffled_game_deck()
