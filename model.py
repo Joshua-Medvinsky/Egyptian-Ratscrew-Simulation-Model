@@ -155,7 +155,14 @@ def sim_one_game(players,num_games):
         #print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
         #print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
       
+       # if len(players_left[current_player_index].deck) == 0 and faceplacer!=current_player index:
+            
+            
+            
+               
+            
         #take card from top of current player
+        
         placed_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
         #add card to table deck
         table_deck.append(placed_card)
