@@ -12,6 +12,7 @@ import random
 import copy
 
 # Global variables
+turns = 0
 deck_count = 1
 player_types = ["m", "r", "p","d", "m+", "m++"]
 #player_types = ["m", "r", "p"]
@@ -107,6 +108,7 @@ def are_increasing(first, second, third):
     return third + 1 == second and second + 1 == first
 
 def create_shuffled_game_deck():
+    
     table_deck = []
     #Jokers
     table_deck.append(("Joker","Black"))
@@ -125,6 +127,7 @@ def create_shuffled_game_deck():
     return table_deck
     
 def sim_one_game(players):
+    global turns
     players_left = copy.copy(players)
     game_deck = create_shuffled_game_deck()
     faceplacer = -1
@@ -159,6 +162,8 @@ def sim_one_game(players):
         placed_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
         #add card to table deck
         table_deck.append(placed_card)
+        #add turn to the game
+        turns+=1
         print()
         print(players_left[current_player_index].name + \
               " places a card: " + (str)(placed_card))
@@ -181,7 +186,7 @@ def sim_one_game(players):
         #time of the next place
         place_time = players_left[next_player].get_placing_time()
         #if reaction time is faster than place time
-        if(place_time>fast_time):  place_time_quicker = True
+        if(place_time<fast_time):  place_time_quicker = True
         #checks if the current slap is valid
         if is_valid_slap(table_deck, rules):
             
@@ -493,16 +498,16 @@ def empty_deck(player_list):
 #creates 3 dummy players for testing
 def dummy_players():
     
-    playerOne = p.player("Player 1", "water",5,5,5,5)
+    playerOne = p.player("Player 1", "water",5,3,5,5)
     playerTwo = p.player("Player 2", "fire",5,5,5,5)
-    playerThree = p.player("Player 3", "earth",5,5,5,5)
+    playerThree = p.player("Player 3", "earth",5,7,5,5)
     
     playerList = [playerOne,playerTwo,playerThree]
     return playerList        
   
 
-def sim_x_games(number_of_games):
-    x_game_players =dummy_players()
+def sim_x_games(number_of_games,x_game_players):
+    #x_game_players =dummy_players()
     reset=x_game_players[:]
     #run games x times
     for x in range(number_of_games):
@@ -520,3 +525,4 @@ def sim_x_games(number_of_games):
         print("    Slap Cards gained: " + (str)(player.slap_cards_gained))
         print("    Face cards gained: " + (str)(player.face_cards_gained))
         print("    Misslaps: " + (str)(player.miss_slaps))
+    return reset
