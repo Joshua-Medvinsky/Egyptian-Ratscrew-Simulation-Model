@@ -548,8 +548,8 @@ def empty_deck(player_list):
 def dummy_players():
     '''Creates a set of sample players to be used for automating simulation testing and use'''
     playerOne = p.player("Player 1",5,5,5,5)
-    playerTwo = p.player("Player 2",5,4,5,5)
-    playerThree = p.player("Player 3",5,5,5,5)
+    playerTwo = p.player("Player 2",5,3.5,5,5)
+    playerThree = p.player("Player 3",5,8,5,5)
     
 
     playerList = [playerOne,playerTwo,playerThree]
