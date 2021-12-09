@@ -283,8 +283,8 @@ def sim_one_game(players,num_games):
                 #print("There are cards to memorize")
                 #Every player has the chance to memorize the slap cards
                 for player in players_left:
-                    if num_games == 1:
-                        print("Memorization deck: " + (str)(player.memorized_deck))
+                    
+                        
                     #Checks if player has enough memorization capacity
                     if (player.memorization_limit - \
                         len(player.memorized_deck)) >= len(cards_to_memorize):
@@ -545,9 +545,9 @@ def dummy_players():
     playerOne = p.player("Player 1", "water",5,5,5,5)
     playerTwo = p.player("Player 2", "fire",5,5,5,5)
     playerThree = p.player("Player 3", "earth",5,5,5,5)
-    playerFour = p.player("Player 4", "earth",5,5,5,5)
+   # playerFour = p.player("Player 4", "earth",5,5,5,5)
 
-    playerList = [playerOne,playerTwo,playerThree,playerFour]
+    playerList = [playerOne,playerTwo,playerThree]
 
     return playerList        
   

@@ -104,7 +104,7 @@ def analyzing_reaction_skill_affect_on_game_length():
     
         playerList = [playerOne,playerTwo,playerThree]
         #playerOne.reaction_value = i
-        m.sim_x_games(1000,playerList)
+        m.sim_x_games(100,playerList)
         
     
         turns_list.append(m.turns)
