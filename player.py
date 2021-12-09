@@ -42,14 +42,14 @@ class player(object):
             
             #current rudementary logic (to be changed later)
             #reaction_time = (float)(np.random.randint(5,10)/self.reaction_value)
-            high_end = self.reaction_value*100
+            high_end = self.reaction_value*50
             reaction_time= (float)(np.random.randint(0,1000-high_end))
             return reaction_time
         
         def get_placing_time(self):
-            value_modifier = self.placing_value*100
+            value_modifier = self.placing_value*50
             #current rudementary logic (to be changed later)
-            placing_time = (float)(np.random.randint(550-value_modifier,1200))
+            placing_time = (float)(np.random.randint(550-value_modifier,1250))
             #placing_time =300
             return placing_time
             
@@ -57,9 +57,9 @@ class player(object):
             #I like this logic, 10% is reasonable
             miss_slap = False
             
-            if np.random.randint(0,100) < self.miss_slap_value*3:
+            if np.random.randint(0,100) < self.miss_slap_value*5:
                 miss_slap = True
-                self.slaps+=1
+                #self.slaps+=1
                 
             return miss_slap
             #return True
@@ -67,6 +67,6 @@ class player(object):
         def build_player_memorization(self, memorization_value):
             limit = memorization_value / 2
             self.memorization_limit = math.floor(limit)
-            self.memorization_chance_high = math.floor(10 * memorization_value)
-            self.memorization_chance_low = math.floor(7.5 * memorization_value)
+            self.memorization_chance_high = math.floor(50 + (10 * math.floor(memorization_value/2)))
+            self.memorization_chancelow = math.floor(50 + (7.5 * math.floor(memorization_value/2)))
             
