@@ -148,7 +148,6 @@ def sim_one_game(players):
         for player in players_left:
             print(player.name + ": " + (str)(player.deck))
             print()
-        print()
         print("Table deck: " + (str)(table_deck))
         
         #print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
@@ -158,17 +157,39 @@ def sim_one_game(players):
         placed_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
         #add card to table deck
         table_deck.append(placed_card)
-        print()
-        print(players_left[current_player_index].name + \
-              " places a card: " + (str)(placed_card))
-
-        #checks if the current slap is valid
+        #print()
+        #print(players_left[current_player_index].name + \
+           #   " places a card: " + (str)(placed_card))
+        place_time_quicker = False
+        
+        i = 0
+        #index of the fastest player
+        fast_index = 0 
+        #fast_time = players_left[0].get_reaction_time()
+        fast_time = 10000000
+        for player in players_left:
+            reaction_time = player.get_reaction_time()
+            #print(player.name + "'s reaction time: " + (str)(reaction_time))
+            if reaction_time < fast_time:
+                fast_index = i
+                fast_time = reaction_time
+            i+=1
+        #index of the next placer
+        next_player = get_next_player_index(current_player_index, players_left)
+        #time of the next place
+        place_time = players_left[next_player].get_placing_time()
+        #if reaction time is faster than place time
+        if(place_time < fast_time):  place_time_quicker = True
+        #checks if the current slap is valid 
+        
         if is_valid_slap(table_deck, rules):
+            
             #print("INSIDE SLAP METHOD")           
             # ---------- Utilizing memorized cards logic ----------
-            is_top_bottom = False 
             memorization_slap_players = []
             for player in players_left:
+                print("YOU ARE HERE")
+                print(player.name + "'s memorized deck: " + (str)(player.memorized_deck))
                 # Joker is remembered
                 if len(table_deck) >= 1 and len(player.memorized_deck) >= 1 and \
                     table_deck[-1][0] == "Joker" and \
@@ -203,93 +224,53 @@ def sim_one_game(players):
                         player_slapped = True
                         if player_slapped:
                             memorization_slap_players.append(player)
-                            is_top_bottom = True
+                            player.memorized_top_bottom = True
                             
-            print("Memorization slap players: " + (str)(memorization_slap_players))
-            # No players memorized the card
-            if len(memorization_slap_players) == 0:
-                
-            # -------------------- Player reaction comparison logic --------------------
-                i = 0
-                #index of the fastest player
-                fast_index = 0 
-                #fast_time = players_left[0].get_reaction_time()
-                fast_time = 10000000
-                for player in players_left:
-                    reaction_time = player.get_reaction_time()
-                    #print(player.name + "'s reaction time: " + (str)(reaction_time))
-                    if reaction_time < fast_time:
-                        fast_index = i
-                        fast_time = reaction_time
-                        i+=1
-                #index of the next placer
-                next_player = get_next_player_index(current_player_index, players_left)
-                #time of the next place
-                place_time = players_left[next_player].get_placing_time()
-                #if placing time is faster than reaction time
-                if place_time > fast_time:
-                    #What happens when a player gets a slap
-                    print(players_left[fast_index].name + " SLAPPED") 
-                    print("Table Deck: " + (str)(table_deck))
-                    for card in table_deck:
-                        players_left[fast_index].deck.insert(0,card)
-                    players_left[fast_index].slap_cards_gained += len(table_deck)
-                    players_left[fast_index].slaps += 1
-                    print(players_left[fast_index].name + " deck after slap:" + (str)(players_left[fast_index].deck))
-                
-            # One player memorized the card
-            elif len(memorization_slap_players) == 1:
-                slap_player = memorization_slap_players[0]
-                slap_index = players_left.index(slap_player)
-                print(players_left[slap_index].name + " SLAPPED FROM MEMORY") 
-                print("Table Deck: " + (str)(table_deck))
-                for card in table_deck:
-                    players_left[slap_index].deck.insert(0,card)  
-                players_left[slap_index].slap_cards_gained += len(table_deck)
-                players_left[slap_index].slaps += 1
-                print(players_left[slap_index].name + " deck after slap:" + (str)(players_left[fast_index].deck))
-                
-            # More than one player memorized the card
-            else:
-                slap_player = random.choice(memorization_slap_players)
-                slap_index = players_left.index(slap_player)
-                print(players_left[slap_index].name + " SLAPPED FROM MEMORY") 
-                print("Table Deck: " + (str)(table_deck))
-                for card in table_deck:
-                    players_left[slap_index].deck.insert(0,card)  
-                players_left[slap_index].slap_cards_gained += len(table_deck)
-                players_left[slap_index].slaps += 1
-                print(players_left[slap_index].name + " deck after slap:" + (str)(players_left[fast_index].deck))
+                            
+            #print("Memorization slap players: " + (str)(memorization_slap_players))
+            for player in memorization_slap_players:
+                print(player.name + "'s memorization deck: " + (str)(player.memorized_deck))
+            memory_slapper = p.player
+            if len(memorization_slap_players) == 1:
+                memory_slapper = memorization_slap_players[0]
+            elif len(memorization_slap_players) > 1:
+                memory_slapper = random.choice(memorization_slap_players)
                 
             # Remove memorized cards from player memorization deck
             for player in memorization_slap_players:
-                if is_top_bottom:
-                    player.memorized_deck.remove(placed_card)
+                if player.memorized_top_bottom:
+                    card = (table_deck[-1][0], "top/bottom")
+                    if player.memorized_deck.count(card) == 1:
+                        player.memorized_deck.remove(card)
                 else:
-                    card_index = player.memorized_deck.index(placed_card)
-                    previous_card = player.memorized_deck[card_index + 1]
-                    player.memorized_deck.remove(placed_card)
-                    player.memorized_deck.remove(previous_card)
-
-
-           
-                
-        # -------------------- Memorization logic --------------------
+                    card_index = player.memorized_deck.index(table_deck[-1])
+                    '''
+                    if player.memorized_deck.count(table_deck[-1]) == 1:
+                        previous_card = player.memorized_deck[card_index + 1]
+                        player.memorized_deck.remove(placed_card)
+                        player.memorized_deck.remove(previous_card)
+                        '''
+                    player.memorized_deck.remove(table_deck[-1])
+                player.memorized_top_bottom = False
+                    
+            # -------------------- Memorization logic --------------------
             cards_to_memorize = []
             # Slap is pair or joker
             if len(table_deck) >= 2 and (table_deck[-1][0] == table_deck[-2][0] or \
                 table_deck[-1][0] == "Joker"):
                 cards_to_memorize.append(table_deck[-1])
-                cards_to_memorize.append(table_deck[-2])
+                #cards_to_memorize.append(table_deck[-2])
             # Slap is top/bottom
-            if len(table_deck) >= 2 and table_deck[-1][0] == table_deck[0][0]:
+            elif len(table_deck) >= 2 and table_deck[-1][0] == table_deck[0][0]:
                 card = table_deck[0]
                 new_card = (card[0], "top/bottom")
                 cards_to_memorize.append(new_card)
             # If there are slap cards to memorize
-            if len(cards_to_memorize) >= 1:
+            if len(cards_to_memorize) == 1:
+                #print("There are cards to memorize")
                 #Every player has the chance to memorize the slap cards
                 for player in players_left:
+                    print("Memorization deck: " + (str)(player.memorized_deck))
                     #Checks if player has enough memorization capacity
                     if (player.memorization_limit - \
                         len(player.memorized_deck)) >= len(cards_to_memorize):
@@ -299,63 +280,166 @@ def sim_one_game(players):
                             for card in cards_to_memorize:
                                 player.memorized_deck.append(card)
                             print(player.name + "'s memorization deck: " + (str)(player.memorized_deck))
-                                
-        # --------------------------------------------------------------
-                                
-            table_deck = []
+            
+            # --------------------------------------------------------------
                 
-        # ---------- Updating index logic if player is eliminated ---------
-            #if the current players deck is 0
-            if np.size(players_left[current_player_index].deck) == 0:
-                print()
-                print("Eliminated Player: " + \
-                          (str)(players_left[current_player_index].name))
-                if faceplacer > current_player_index:
-                    faceplacer -= 1
-                #current player is eliminated
-                players_left.pop(current_player_index)
-                #if you are the last player do not subtract
-                if current_player_index > fast_index:                            
-                    current_player_index = fast_index
+            # -------------------- Player reaction comparison logic --------------------
+            i = 0
+            #index of the fastest player
+            fast_index = 0 
+            #fast_time = players_left[0].get_reaction_time()
+            fast_time = 10000000
+            for player in players_left:
+                if player == memory_slapper:
+                    reaction_time = 0.0
                 else:
-                    current_player_index = fast_index - 1 
+                    reaction_time = player.get_reaction_time()
+                #print(player.name + "'s reaction time: " + (str)(reaction_time))
+                if reaction_time < fast_time:
+                    fast_index = i
+                    fast_time = reaction_time
+                    i+=1
+            #index of the next placer
+            next_player = get_next_player_index(current_player_index, players_left)
+            #time of the next place
+            place_time = players_left[next_player].get_placing_time()
+            #if placing time is faster than reaction time
+            if place_time > fast_time:
+                #What happens when a player gets a slap
+                if players_left[fast_index] == memory_slapper:
+                    print(players_left[fast_index].name + " SLAPPED FROM MEMORY") 
+                else:
+                    print(players_left[fast_index].name + " SLAPPED") 
+                
+                print("Table Deck: " + (str)(table_deck))
+                for card in table_deck:
+                    players_left[fast_index].deck.insert(0,card)
+                players_left[fast_index].slap_cards_gained += len(table_deck)
+                players_left[fast_index].slaps += 1
+                print(players_left[fast_index].name + " deck after slap:" + (str)(players_left[fast_index].deck))
+                
+                
+            # ---------- Updating index logic if player is eliminated ---------
+                #if the current players deck is 0
+                if np.size(players_left[current_player_index].deck) == 0:
+                    #print()
+                    #print("Eliminated: " + \
+                              #(str)(players_left[current_player_index].name))
+                    if faceplacer > current_player_index:
+                        faceplacer -= 1
+                    #current player is eliminated
+                    players_left.pop(current_player_index)
+                    #if you are the last player do not subtract
+                    if current_player_index > fast_index:                            
+                        current_player_index = fast_index
+                    else:
+                        current_player_index = fast_index - 1 
                     
-            face_count = -1
-            faceplacer = -1
-            continue
-            
-            
-        else:
-                
-                
+
+                face_count = -1
+                faceplacer = -1
+                for player in players_left:
+                    for card in player.memorized_deck:
+                        if card[1] == "top/bottom" or \
+                            (card[0] == table_deck[-1][0] and card[0] != "Joker") or \
+                                card == table_deck[-1]:
+                            player.memorized_deck.remove(card)
+                            
+                table_deck = []
+                continue
+            else:
+                place_time_quicker = True
+            #misslap cannot occur on a empty deck
+            #if np.size(table_deck)==0:
+                #   continue
+        if place_time_quicker == True:    
         # -------------------- Misslap logic --------------------
-            #check if any players have empty decks before burn
+                #check if any players have empty decks before burn
             i = 0  
             elimination_index = 0
             for player in players_left:
                 if np.size(player.deck) == 0:
                     elimination_index = i
                 i += 1
+
+            #print(players_left[elimination_index].name)
+            #print("face placer: " + players_left[faceplacer].name)
             #checks if the player has 0 cards and placed a face card last
+
             if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
-                print("Eliminated Player: " + (str)(players_left[elimination_index].name))
+               # print("Eliminated Player: " + (str)(players_left[elimination_index].name))
                 if faceplacer > current_player_index:
                     faceplacer-=1
                 players_left.pop(elimination_index)
                 if current_player_index == len(players_left):
                     current_player_index = 0
-                           
-                                                    
-            #Scenario in where the placing time is faster than the slap time
+
+                elimination_index=0
+                               
+                
+                #return_to_start=False
+                #Scenario in where the placing time is faster than the slap time
+                
+                # have an outer if statement checking every reaction
+            temp_list = []
+            reaction_time = 0
+            #large constant
+            fast_time = 10000000
+            bool_list = []
             for player_i in players_left:
-                if(player_i.miss_slap_occured()==True):
-                    player_i.miss_slaps+=1
-  
-                    burn_card = player_i.deck.pop(len(player_i.deck)-1)
+                miss_slap_bool = player_i.miss_slap_occured()
+                bool_list.append(miss_slap_bool)
+                
+                        
+                reaction_time = player_i.get_reaction_time()
+                #print(player.name + "'s reaction time: " + (str)(reaction_time))
+                if reaction_time < fast_time:
+                    fast_index = i
+                    fast_time = reaction_time
+                    i+=1
+                if miss_slap_bool:
+                    temp_list.append(tuple((player_i,fast_time)))
+                    miss_slapper = player_i
+            fast_time=1000000
+                
+            for player_i in temp_list:
+                if player_i[1]> fast_time:
+                    miss_slapper = player_i
+                     
+            #checks if this was a valid slap and someone miss-slaps   
+            if is_valid_slap(table_deck, rules) and any(bool_list):   
+                print(miss_slapper.name + " SLAPPED") 
+                #print("Table Deck: " + (str)(table_deck))
+                miss_slapper.slaps += 1
+                for card in table_deck:
+                    miss_slapper.deck.insert(0,card)
+                print("IN 1--------------------------------------------------")
+                miss_slapper.slap_cards_gained += len(table_deck)
+                miss_slapper.slaps += 1
+                face_count = -1
+                faceplacer = -1
+                table_deck = []
+                                
+                continue
+                     
+            #ignore a miss slap on a face placer with 0 cards  
+            if np.size(players_left[elimination_index].deck) == 0 and faceplacer == elimination_index:
+                break
+            if (is_valid_slap(table_deck, rules)) ==False and any(bool_list):
+                miss_slapper.miss_slaps+=1
+                print("IN 2--------------------------------------------------")
+                #dont pop if at 0
+                if(miss_slapper==0 and faceplacer!= elimination_index):
+                    print("Josh's special check")
+                    players_left.pop(miss_slapper)
+                if(miss_slapper.deck!=0):
+                    
+                    burn_card = miss_slapper.deck.pop(len(miss_slapper.deck)-1)
                     table_deck.insert(0, burn_card)
-                    print(player_i.name + " miss-slapped")
-                    print("Card burned: " + (str)(burn_card))
-        
+                print(miss_slapper.name + " miss-slapped")
+                print("Card burned: " + (str)(burn_card))        
+                    
+                        
         # -------------------- Face card logic --------------------
         
         if face_count > 0:
@@ -395,7 +479,7 @@ def sim_one_game(players):
         
         #removes player from the game if they run out of cards and the last card they placed was a number
         if np.size(players_left[elimination_index].deck) == 0 and faceplacer != elimination_index:
-            print("Eliminated Player: " + (str)(elimination_index))
+            print("Eliminated: " + (str)(players_left[elimination_index].name))
             if faceplacer > current_player_index:
                         faceplacer-=1
             players_left.pop(elimination_index)
@@ -442,8 +526,10 @@ def dummy_players():
     playerOne = p.player("Player 1", "water",5,5,5,5)
     playerTwo = p.player("Player 2", "fire",5,5,5,5)
     playerThree = p.player("Player 3", "earth",5,5,5,5)
+    playerFour = p.player("Player 4", "earth",5,5,5,5)
     
-    playerList = [playerOne,playerTwo,playerThree]
+    playerList = [playerOne,playerTwo,playerThree,playerFour]
+
     return playerList        
   
 

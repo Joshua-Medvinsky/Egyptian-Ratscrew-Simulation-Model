@@ -26,6 +26,7 @@ class player(object):
             self.miss_slap_value = miss_slap_value
             self.deck = []
             self.memorized_deck = []
+            self.memorized_top_bottom = False
             self.memorization_limit = 5
             self.memorization_chance_high = 100
             self.memorization_chance_low = 99
@@ -46,9 +47,9 @@ class player(object):
             return reaction_time
         
         def get_placing_time(self):
-            value_modifier = self.placing_value
+            value_modifier = self.placing_value*100
             #current rudementary logic (to be changed later)
-            placing_time = (float)(np.random.randint(100,1200-value_modifier))
+            placing_time = (float)(np.random.randint(550-value_modifier,1200))
             #placing_time =300
             return placing_time
             
@@ -56,36 +57,16 @@ class player(object):
             #I like this logic, 10% is reasonable
             miss_slap = False
             
-            if np.random.randint(0,100) < self.miss_slap_value*5:
+            if np.random.randint(0,100) < self.miss_slap_value*3:
                 miss_slap = True
                 self.slaps+=1
                 
             return miss_slap
+            #return True
         
-        
-        #memorization: top/bottom, pairs, joker, sandwich
-        #def build_player_memorization(self, memorization_value):
-            #limit = memorization_value / 2
-            #self.memorization_limit = math.floor(limit)
-
+        def build_player_memorization(self, memorization_value):
+            limit = memorization_value / 2
+            self.memorization_limit = math.floor(limit)
+            self.memorization_chance_high = math.floor(10 * memorization_value)
+            self.memorization_chance_low = math.floor(7.5 * memorization_value)
             
-            #create memorization_chance_high
-            #create memorization_chance_low
-            #create 
-            
-            
-        
-        
-        
-        '''
-        Data Collection:
-            
-        Memorization slap times to slap:
-            - joker - 0.2 seconds
-            - joker - 0.16 seconds
-            - joker - 0.2 seconds
-            - joker - 0.23 seconds
-            - joker - 0.18 seconds
-            - 
-        '''
-        
