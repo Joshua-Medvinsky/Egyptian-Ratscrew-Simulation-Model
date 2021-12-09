@@ -8,6 +8,7 @@ Author: Joshua Medvinsky and Daniel Penkov
 """
 
 import numpy as np
+import math
 
 
 class player(object):
@@ -26,7 +27,8 @@ class player(object):
             self.deck = []
             self.memorized_deck = []
             self.memorization_limit = 5
-            self.memorization_chance = 50
+            self.memorization_chance_high = 100
+            self.memorization_chance_low = 99
             self.miss_slaps = 0
             self.slaps = 0
             self.wins = 0
@@ -62,7 +64,15 @@ class player(object):
         
         
         #memorization: top/bottom, pairs, joker, sandwich
-        #def build_player_memorization(self):
+        #def build_player_memorization(self, memorization_value):
+            #limit = memorization_value / 2
+            #self.memorization_limit = math.floor(limit)
+
+            
+            #create memorization_chance_high
+            #create memorization_chance_low
+            #create 
+            
             
         
         
