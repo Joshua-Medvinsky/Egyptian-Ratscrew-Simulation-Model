@@ -163,10 +163,10 @@ def analyzing_placing_skill_affect_on_win_favorability():
     placing_list=[]
     for i in range(101):
         current_value = i / 10
-        playerOne = p.player("Player 1", "water",5,5,i,5)
-        playerTwo = p.player("Player 2", "fire",1,1,1,1)
-        playerThree = p.player("Player 3", "earth",1,1,1,1)
-        playerFour = p.player("Player 4", "earth",1,1,1,1)
+        playerOne = p.player("Player 1",5,5,i,5)
+        playerTwo = p.player("Player 2",1,1,1,1)
+        playerThree = p.player("Player 3",1,1,1,1)
+        playerFour = p.player("Player 4",1,1,1,1)
     
         playerList = [playerOne,playerTwo,playerThree,playerFour]
         m.sim_x_games(100,playerList)
@@ -180,6 +180,10 @@ def analyzing_placing_skill_affect_on_win_favorability():
 
     plt.plot(placing_list,win_list)
     plt.show()
+    
+    
+def analyzing_slap_size_deviation_vs_number_of_players():
+    
 
     """    
 def analyzing_placing_skill_affect_on_win_favorability():
