@@ -18,6 +18,25 @@ import model as m
 import numpy as np
 import matplotlib.pyplot as plt
 
+def verification_model():
+    #run with 8 players see if total wins add up to 100 in a 100 game
+    playerOne = p.player("Player 1", "water",5,5,5,5)
+    playerTwo = p.player("Player 2", "fire",5,5,5,5)
+    playerThree = p.player("Player 3", "earth",5,5,5,5)
+    playerFour = p.player("Player 4", "earth",5,10,5,5)
+
+
+    player_list = [playerOne,playerTwo , playerThree,playerFour]
+    m.sim_x_games(100,player_list)    
+    game_list =[]
+    labels = []
+    for player_i in player_list:
+        game_list.append(player_i.wins)
+        labels.append(tuple((player_i.name,player_i.wins)))
+    plt.pie(game_list, labels = labels)
+    plt.show()
+   
+    
 def analyzing_memorization_skill_affect_on_win_favorability():
     win_list=[]
     memorization_list=[]
@@ -85,7 +104,7 @@ def analyzing_reaction_skill_affect_on_game_length():
     
         playerList = [playerOne,playerTwo,playerThree]
         #playerOne.reaction_value = i
-        m.sim_x_games(50,playerList)
+        m.sim_x_games(1000,playerList)
         
     
         turns_list.append(m.turns)
@@ -96,7 +115,33 @@ def analyzing_reaction_skill_affect_on_game_length():
 
     plt.plot(reaction_list,turns_list)
     plt.show()
+def analyzing_placing_skill_affect_on_game_length():
+    #test1 = m()
+    #m.sim_x_games(10,m.dummy_players())
+   
+    turns_list=[]
+    placing_list=[]
+    for i in range(11):
+        
+        #reset turns to 0
+        m.turns = 0
+        playerOne = p.player("Player 1", "water",5,5,i,5)
+        playerTwo = p.player("Player 2", "fire",5,5,5,5)
+        playerThree = p.player("Player 3", "earth",5,5,5,5)
     
+        playerList = [playerOne,playerTwo,playerThree]
+        #playerOne.reaction_value = i
+        m.sim_x_games(1000,playerList)
+        
+    
+        turns_list.append(m.turns)
+        placing_list.append(playerOne.placing_value)
+    plt.title("Placing skills affect on game length")
+    plt.xlabel("Placing skill")
+    plt.ylabel("Turns")
+    plt.plot(placing_list,turns_list)
+    plt.show()
+        
 def analyzing_placing_skill_affect_on_opponenet_misslaps():
     misslaps_list=[]
     reaction_list=[]
