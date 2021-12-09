@@ -66,6 +66,4 @@ class player(object):
         
         def build_player_memorization(self, memorization_value):
             self.memorization_limit = math.floor(memorization_value)
-            #self.memorization_chance_high = math.floor(50 + (10 * math.floor(memorization_value/2)))
-            #self.memorization_chancelow = math.floor(50 + (7.5 * math.floor(memorization_value/2)))
             

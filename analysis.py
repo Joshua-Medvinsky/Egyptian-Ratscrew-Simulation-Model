@@ -190,7 +190,76 @@ def analyzing_placing_skill_affect_on_win_favorability():
     
     
 def analyzing_slap_size_deviation_vs_number_of_players():
+    return 0
+
+def analyzing_memorization_skill_affect_on_game_length():
+    turns_list = []
+    memorization_list = []
+    for i in range(101):
+        x = i / 10
+        #reset turns to 0
+        m.turns = 0
+        player1 = p.player("Player 1",x,5,5,5)
+        player2 = p.player("Player 2",5,5,5,5)
+        player3 = p.player("Player 3",5,5,5,5)
+        player4 = p.player("Player 4",5,5,5,5)
+        player5 = p.player("Player 5",5,5,5,5)
     
+        playerList = [player1,player2,player3,player4,player5]
+        #playerOne.reaction_value = i
+        m.sim_x_games(100,playerList)
+    
+        turns_list.append(m.turns)
+        memorization_list.append(player1.reaction_value)
+    plt.title("Memorization Skill Effect on Game Length")
+    plt.xlabel("Memorization Skill")
+    plt.ylabel("Number of Turns (for 100 games)")
+
+    plt.plot(memorization_list,turns_list)
+    plt.show()
+
+def analyzing_player_number_vs_slaps_won(): 
+    player1 = p.player("Player 1",5,5,5,5)
+    player2 = p.player("Player 2",5,5,5,5)
+    player3 = p.player("Player 3",5,5,5,5)
+    player4 = p.player("Player 4",5,5,5,5)
+    player5 = p.player("Player 5",5,5,5,5)
+    player6 = p.player("Player 6",5,5,5,5)
+    player7 = p.player("Player 7",5,5,5,5)
+    player8 = p.player("Player *",5,5,5,5)
+    
+    player_counts = []
+    slap_counts = []
+    player_list = [player1,player2]
+    adding_list = [player3,player4,player5,player6,player7,player8]
+    number_of_slaps = 0
+    
+    for i in range(7):
+        #add length of player list    
+        #player_counts.append(len(player_list))
+        
+        for x in range(100):
+            m.sim_x_games(1,player_list)
+            for player_i in player_list:
+                number_of_slaps += player_i.slaps
+                player_i.slaps = 0
+            slap_counts.append(number_of_slaps)
+            number_of_slaps = 0
+            player_counts.append(len(player_list))
+        #add a player at the end of every Loop
+        if i != 6:
+            player_list.append(adding_list[i])
+    
+    print("PLAYER COUNTS: " + (str)(player_counts))
+    print("SLAP COUNTS: " + (str)(slap_counts))
+    
+    plt.bar(player_counts, slap_counts, color ='maroon',  width = 0.4)
+    plt.title("Player number vs slap number")
+    plt.xlabel("Number of players")
+    plt.ylabel("Number of slaps")
+    plt.show()
+
+
 
 def analyzing_average_slap_size_vs_game_stage():
     playerOne = p.player("Player 1", "water",5,5,5,5)
@@ -229,11 +298,11 @@ def analyzing_average_slap_size_vs_game_stage():
     plt.show()
 
 def analyzing_which_skill_beats_the_rest():
-    playerOne = p.player("Player 1", "water",7,5,5,5)
-    playerTwo = p.player("Player 2", "fire",5,5.5,5,5)
-    playerThree = p.player("Player 3", "earth",5,5,7,5)
+    playerOne = p.player("Player 1",7,5,5,5)
+    playerTwo = p.player("Player 2",5,5.5,5,5)
+    playerThree = p.player("Player 3",5,5,7,5)
     #player four has a lower chance of misslapping
-    playerFour = p.player("Player 4", "fire",5,5,5,0)
+    playerFour = p.player("Player 4",5,5,5,0)
     
     playerList = [playerOne,playerTwo,playerThree, playerFour]
 
@@ -250,29 +319,4 @@ def analyzing_which_skill_beats_the_rest():
     plt.xlabel("Skills")
     plt.ylabel("Win %")
     plt.title("Most effective skill")
-    plt.show()
-    plt.show()
-    
-    """    
-def analyzing_placing_skill_affect_on_win_favorability():
-    
-def analyzing_which_skill_beats_the_rest():
-    
-def analyzing_memorization_skill_affect_on_game_length():
-    
-
-        
-def analyzing_placing_skill_affect_on_game_length():
- 
-def analyzing_deck_number_vs_turn_number():
-    
-def heatmap_of_player_number_and_deck_number_for_biggest_average_slap():
-    
-def analyzing_player_number_vs_turn_number(): 
-    
-
-    
-def analyzing_slap_size_deviation_vs_number_of_players():
-    
-
-"""
+    plt.show()   

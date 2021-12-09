@@ -14,33 +14,24 @@ import copy
 # Global variables
 turns = 0
 deck_count = 1
-player_types = ["m", "r", "p","d", "m+", "m++"]
 player_count = 3
 rules = ["pair", "sandwich", "top_bottom", "joker", "marriage",
          "divorce", "3_in_a_row"]
 players = []
-memorization_range = [2, 5]
-reaction_range = [7,9]
-placing_range = [2,10]
-memorization_value = 5.6
-reaction_value = 2
-placing_value = 2
-miss_slap_value = 2
-# tracking slap sizes by game and level
-# graph of turns vs amount of decks over 10000 games
-
-def main():
-    create_players()
-    sim_one_game(players)
-
-
-def create_players():
-    for player in len(player_types):
-        players.append(player(player_types[player]), memorization_value,
-                                reaction_value, placing_value, miss_slap_value)
-    
+memorization_value = 5
+reaction_value = 5
+placing_value = 5
+miss_slap_value = 5
     
 def is_valid_slap(table_deck, rules):
+    '''
+    Method returns true if the current top card on the table deck 
+    creates a valid slap that all players can try to win.
+    
+    @param table_deck = a list of card that represent the current table 
+                        deck all player are contributing a card to every turn
+    @param rules = a list of all the rules that are valid for the current simulation instance
+    '''
     if rules.count("pair") > 0:
         if len(table_deck) >= 2 and table_deck[-1][0] == table_deck[-2][0]:
             # Slap is a pair
@@ -101,13 +92,15 @@ def is_valid_slap(table_deck, rules):
     return False
     
 def are_decreasing(first, second, third):
+    '''Returns true if the three given card values are in decreasing order'''
     return first + 1 == second and second + 1 == third
     
 def are_increasing(first, second, third):
+    '''Returns true if the three given card values are in increasing order'''
     return third + 1 == second and second + 1 == first
 
 def create_shuffled_game_deck():
-    
+    '''Method creates a shuffled list of all the game cards to be used for simulated games'''
     table_deck = []
     #Jokers
     table_deck.append(("Joker","Black"))
@@ -121,11 +114,16 @@ def create_shuffled_game_deck():
             table_deck.append(tuple((card,suit)))
             
     random.shuffle(table_deck)
-    #uncomment to see deck
-    #print(table_deck)
     return table_deck
     
 def sim_one_game(players,num_games):
+    '''This is the main simulation method in our program, which is responsible for
+        the majority of the logic used to simulate a game of Eqyptian Ratscrew.
+        This method lays out the logic for all game mechanics we have implemented: 
+            - Face Card Rules
+            - Slaps
+            - Player Reaction
+            - Player Memorization'''
     global turns
     players_left = copy.copy(players)
     game_deck = create_shuffled_game_deck()
@@ -151,16 +149,7 @@ def sim_one_game(players,num_games):
                 print(player.name + ": " + (str)(player.deck))
                 print()
                 print("Table deck: " + (str)(table_deck))
-        
-        #print("CURRENT SIZE--------------- : " +(str)(len(players_left)))
-        #print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
-      
-       # if len(players_left[current_player_index].deck) == 0 and faceplacer!=current_player index:
-            
-            
-            
                
-            
         #take card from top of current player
 
         if len(players_left[current_player_index].deck) == 0:
@@ -199,8 +188,7 @@ def sim_one_game(players,num_games):
         
         if is_valid_slap(table_deck, rules):
             
-            #print("INSIDE SLAP METHOD")           
-            # ---------- Utilizing memorized cards logic ----------
+            # ------------------ Utilizing memorized cards logic ---------------------
             memorization_slap_players = []
             for player in players_left:
                 if num_games == 1:
@@ -266,7 +254,8 @@ def sim_one_game(players,num_games):
                     player.memorized_deck.remove(table_deck[-1])
                 player.memorized_top_bottom = False
                     
-            # -------------------- Memorization logic --------------------
+            # --------------------------- Memorization logic ---------------------------
+            
             cards_to_memorize = []
             # Slap is pair or joker
             if len(table_deck) >= 2 and (table_deck[-1][0] == table_deck[-2][0] or \
@@ -297,7 +286,7 @@ def sim_one_game(players,num_games):
                             if num_games == 1:
                                 print(player.name + "'s memorization deck: " + (str)(player.memorized_deck))
             
-            # --------------------------------------------------------------
+            # --------------------------------------------------------------------------
                 
             # -------------------- Player reaction comparison logic --------------------
             i = 0
@@ -336,7 +325,8 @@ def sim_one_game(players,num_games):
                 players_left[fast_index].slaps += 1
                 
                 
-            # ---------- Updating index logic if player is eliminated ---------
+        # ------------- Updating Indices IF Player is Eliminated ----------------
+       
                 #if the current players deck is 0
                 if np.size(players_left[current_player_index].deck) == 0:
                     #print()
@@ -351,7 +341,8 @@ def sim_one_game(players,num_games):
                         current_player_index = fast_index
                     else:
                         current_player_index = fast_index - 1 
-                    
+                        
+        # -----------------------------------------------------------------------
 
                 face_count = -1
                 faceplacer = -1
@@ -370,7 +361,9 @@ def sim_one_game(players,num_games):
             #if np.size(table_deck)==0:
                 #   continue
         if place_time_quicker == True:    
-        # -------------------- Misslap logic --------------------
+            
+        # -------------------------- Misslap logic ------------------------------
+        
                 #check if any players have empty decks before burn
             i = 0  
             elimination_index = 0
@@ -436,7 +429,7 @@ def sim_one_game(players,num_games):
                 face_count = -1
                 faceplacer = -1
                 table_deck = []
-                                
+                
                 continue
                      
             #ignore a miss slap on a face placer with 0 cards  
@@ -453,10 +446,12 @@ def sim_one_game(players,num_games):
                     table_deck.insert(0, burn_card)
                 if num_games == 1:
                     print(miss_slapper.name + " miss-slapped")
-                    print("Card burned: " + (str)(burn_card))        
+                    print("Card burned: " + (str)(burn_card))       
+                    
+        # -----------------------------------------------------------------------
                     
                         
-        # -------------------- Face card logic --------------------
+        # --------------------------- Face Card logic ---------------------------
         
         if face_count > 0:
              face_count -= 1
@@ -486,6 +481,11 @@ def sim_one_game(players,num_games):
             faceplacer = -1
             if num_games == 1:
                 print(players_left[current_player_index].name + " won off of face cards")
+                
+        # -----------------------------------------------------------------------
+        
+        
+        # -------------------- Elimination of Players Logic ---------------------
         
         i = 0  
         elimination_index = 0
@@ -504,6 +504,9 @@ def sim_one_game(players,num_games):
             players_left.pop(elimination_index)
             if current_player_index == len(players_left):
                 current_player_index = 0
+                
+        # -----------------------------------------------------------------------
+        
     #inserts the cards to winner once the game ends    
     for card in table_deck:
         players_left[faceplacer].deck.insert(0,card)
@@ -511,51 +514,47 @@ def sim_one_game(players,num_games):
     if num_games == 1:
         print(players_left[0].name + " wins!")
     players_left[0].wins += 1
+        
 
-        
-#helper methods            
-#runs one game a given amount of times with new players each game
-def hundomundo():
-    for x in range(10):
-        sim_one_game(dummy_players())
-        
-#gets next player index
 def get_next_player_index(current_index, players):
+    '''Given the current player index, returns the next player's index in the player circle'''
     if current_index == np.size(players) - 1:
         return 0
     else:
         return current_index + 1
-#gets the last player index
+    
 def get_last_player_index(current_index, players):
+    '''Given the current player index, returns the previous player's index in the player circle'''
     if current_index == 0:
         return np.size(players) - 1
     else:
         return current_index - 1
-#method which checks if the card is a face card
+    
 def is_face_card(placed_card):
+    '''Returns true if the given game card is a face card'''
     face_cards = ["Jack", "Queen", "King", "Ace"]
     return face_cards.count(placed_card[0]) == 1
-# empty decks
+
 def empty_deck(player_list):
+    '''Clears out the deck of each player in the given player list'''
     for player in player_list:
         player.deck = []
 #creates 3 dummy players for testing
 def dummy_players():
+    '''Creates a set of sample players to be used for automating simulation testing and use'''
+    playerOne = p.player("Player 1",5,5,5,5)
+    playerTwo = p.player("Player 2",5,5,5,5)
+    playerThree = p.player("Player 3",5,5,5,5)
+    playerFour = p.player("Player 4",5,5,5,5)
     
-    playerOne = p.player("Player 1", "water",5,5,5,5)
-    playerTwo = p.player("Player 2", "fire",5,5,5,5)
-    playerThree = p.player("Player 3", "earth",5,5,5,5)
-    playerFour = p.player("Player 4", "earth",5,5,5,5)
-
     playerList = [playerOne,playerTwo,playerThree,playerFour]
-
     return playerList        
   
-
 def sim_x_games(number_of_games,x_game_players):
-    #x_game_players =dummy_players()
+    '''Runs the main simulation function that simulates one game 
+        the given number of times with the given list of players'''
     reset=x_game_players[:]
-    #run games x times
+    #simulate games x times
     for x in range(number_of_games):
         #resets the list at the start of forloop
         x_game_players = reset
