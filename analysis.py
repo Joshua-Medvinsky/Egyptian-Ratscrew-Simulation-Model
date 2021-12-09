@@ -20,25 +20,24 @@ import matplotlib.pyplot as plt
 def analyzing_memorization_skill_affect_on_win_favorability():
     win_list=[]
     memorization_list=[]
-    for i in range(11):
-        
-        playerOne = p.player("Player 1", "water",i,5,5,5)
+    for i in range(101):
+        current_value = i /10
+        playerOne = p.player("Player 1", "water",10,5,5,5)
         playerTwo = p.player("Player 2", "fire",5,5,5,5)
         playerThree = p.player("Player 3", "earth",5,5,5,5)
+        playerFour = p.player("Player 4", "earth",5,5,5,5)
     
-        playerList = [playerOne,playerTwo,playerThree]
-        #playerOne.reaction_value = i
+        playerList = [playerOne,playerTwo,playerThree,playerFour]
         m.sim_x_games(100,playerList)
         
-    
         win_list.append(playerOne.wins)
-        reaction_list.append(playerOne.reaction_value)
+        memorization_list.append(playerOne.memorization_value)
     plt.title("Analyzing memorization skills affect on wins")
-    print(reaction_list)
-    plt.xlabel("Memorization skill")
+    print(memorization_list)
+    plt.xlabel("Memorization skill value")
     plt.ylabel("Wins")
 
-    plt.plot(reaction_list,win_list)
+    plt.plot(memorization_list,win_list)
     plt.show()
     
     
@@ -157,6 +156,29 @@ def analyzing_amount_of_player_vs_turns():
     plt.ylabel("Turns")
 
     plt.plot(player_count,turns_list)
+    plt.show()
+    
+def analyzing_placing_skill_affect_on_win_favorability():
+    win_list=[]
+    placing_list=[]
+    for i in range(101):
+        current_value = i / 10
+        playerOne = p.player("Player 1", "water",5,5,i,5)
+        playerTwo = p.player("Player 2", "fire",1,1,1,1)
+        playerThree = p.player("Player 3", "earth",1,1,1,1)
+        playerFour = p.player("Player 4", "earth",1,1,1,1)
+    
+        playerList = [playerOne,playerTwo,playerThree,playerFour]
+        m.sim_x_games(100,playerList)
+        
+        win_list.append(playerOne.wins)
+        placing_list.append(playerOne.placing_value)
+    plt.title("Analyzing placing skills affect on wins")
+    print(placing_list)
+    plt.xlabel("Placing skill value")
+    plt.ylabel("Wins")
+
+    plt.plot(placing_list,win_list)
     plt.show()
 
     """    

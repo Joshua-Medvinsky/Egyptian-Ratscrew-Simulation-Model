@@ -156,6 +156,8 @@ def sim_one_game(players,num_games):
         #print("CURRENT PLAYER INDEX--------------- : " +(str)(current_player_index))
       
         #take card from top of current player
+        if players_left[current_player_index].deck:
+            current_player_index = get_next_player_index(current_player_index, players_left)
         placed_card = players_left[current_player_index].deck.pop(len(players_left[current_player_index].deck)-1)
         #add card to table deck
         table_deck.append(placed_card)
@@ -201,7 +203,7 @@ def sim_one_game(players,num_games):
                     player.memorized_deck.count(table_deck[-1]) == 1:
                     if num_games == 1:
                         print(player.name + " memorized the joker!")
-                    player_slapped = np.random.randint(0,100) <= 88 #36/40
+                    player_slapped = np.random.randint(0,100) <= 95 #38/40
                     player_slapped = True
                     if player_slapped:
                         memorization_slap_players.append(player)
@@ -216,7 +218,7 @@ def sim_one_game(players,num_games):
                         card_value == player.memorized_deck[card_index + 1][0]:
                         if num_games == 1:
                             print(player.name + " memorized the pair of " + (str)(card_value) + "'s!") 
-                        player_slapped = np.random.randint(0,100) <= 63 #25/40
+                        player_slapped = np.random.randint(0,100) <= 75 #30/40
                         player_slapped = True
                         if player_slapped:
                             memorization_slap_players.append(player)
@@ -228,7 +230,7 @@ def sim_one_game(players,num_games):
                     if player.memorized_deck.count(target_card) == 1:
                         if num_games == 1:
                             print(player.name + " memorized the top/bottom " + (str)(card_value) + "'s!")
-                        player_slapped = np.random.randint(0,100) <= 23 #9/40 
+                        player_slapped = np.random.randint(0,100) <= 53 #21/40 
                         player_slapped = True
                         if player_slapped:
                             memorization_slap_players.append(player)
@@ -317,6 +319,8 @@ def sim_one_game(players,num_games):
                         print(players_left[fast_index].name + " SLAPPED FROM MEMORY") 
                     else:
                         print(players_left[fast_index].name + " SLAPPED") 
+                if players_left[fast_index] == memory_slapper:  
+                    players_left[fast_index].slaps_by_memory += 1
                 
                 for card in table_deck:
                     players_left[fast_index].deck.insert(0,card)
@@ -556,6 +560,7 @@ def sim_x_games(number_of_games,x_game_players):
         print(player.name + ":") 
         print("    Wins: " + (str)(player.wins))
         print("    Slaps: "+ (str)(player.slaps))
+        print("    Slaps by memory: " + (str)(player.slaps_by_memory))
         print("    Slap Cards gained: " + (str)(player.slap_cards_gained))
         print("    Face cards gained: " + (str)(player.face_cards_gained))
         print("    Misslaps: " + (str)(player.miss_slaps))

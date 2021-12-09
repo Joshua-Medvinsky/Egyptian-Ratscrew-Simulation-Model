@@ -29,9 +29,10 @@ class player(object):
             self.memorized_top_bottom = False
             self.memorization_limit = 5
             self.memorization_chance_high = 100
-            self.memorization_chance_low = 99
+            self.memorization_chance_low = 80
             self.miss_slaps = 0
             self.slaps = 0
+            self.slaps_by_memory = 0
             self.wins = 0
             self.slap_cards_gained = 0
             self.face_cards_gained = 0
@@ -65,8 +66,7 @@ class player(object):
             #return True
         
         def build_player_memorization(self, memorization_value):
-            limit = memorization_value / 2
-            self.memorization_limit = math.floor(limit)
-            self.memorization_chance_high = math.floor(50 + (10 * math.floor(memorization_value/2)))
-            self.memorization_chancelow = math.floor(50 + (7.5 * math.floor(memorization_value/2)))
+            self.memorization_limit = math.floor(memorization_value)
+            #self.memorization_chance_high = math.floor(50 + (10 * math.floor(memorization_value/2)))
+            #self.memorization_chancelow = math.floor(50 + (7.5 * math.floor(memorization_value/2)))
             
