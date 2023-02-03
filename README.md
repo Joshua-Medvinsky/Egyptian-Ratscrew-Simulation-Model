@@ -1,34 +1,31 @@
-This project simulates games of Egyptian Ratscrew, a very common card game.
+######Egyptian Ratscrew Simulation Model
+This repository contains a co-developed Agent Based model in Python that simulates games of Egyptian Ratscrew, a popular card game. The model is accompanied by an analysis class that provides insights into the win percentage of various strategies in the game.
 
-Download model, analysis and player files to run.
+##Getting Started
+To run the simulation, download the model, analysis, and player files to your local machine. Then, run the model.py file to simulate games of Egyptian Ratscrew. To analyze the results of the simulations, run the analysis.py file. The PNG files in the repository provide further analysis of the game when certain variables are tested and compared.
 
-To run a simulation of an Egyptian Ratscrew run the model.py file.
+##User Manual
+#Creating Players
+To create a player, call the player function and pass in the following parameters: p.player(name, memorization skill, reaction skill, placing skill, miss slap skill). The skills should be rated on a scale from 1 to 10.
 
-For an analysis of the simulations run the analysis.py file.
-
-The PNG's attached show analysis of when certain variables in the game are tested and compared.
-
-**User Manual:**
-
-
-When creating a player:
-p.player(name, memorization skill, reaction skill, placing skill, miss slap skill)
-(skills are from 1-10)
-Creating players and playerList:
-    playerOne = p.player("Player 1", 5,5,5,5)
-    playerTwo = p.player("Player 2", 5,5,5,5)
-    playerThree = p.player("Player 3", 5,5,5,5)
-playerList = [playerOne,playerTwo,playerThree]
-
-Utilizing sim_x_games function:
-If the user wishes to simulate a certain number of games call the sim_x_games method and pass in the number of games you wish to simulate as well as a list of players you wish to call for this class
 For example:
-sim_x_games(100,playerList)
+'''
+playerOne = p.player("Player 1", 5,5,5,5)
+playerTwo = p.player("Player 2", 5,5,5,5)
+playerThree = p.player("Player 3", 5,5,5,5)
+playerList = [playerOne,playerTwo,playerThree]
+'''
+#Simulating Games
+#Simulating Multiple Games
+To simulate a specified number of games, call the sim_x_games method and pass in the number of games you wish to simulate, as well as a list of players. For example: sim_x_games(100,playerList).
 
-Utilizing sim_one_game function:
-If a user wishes to simulate one game and receive a play by play for every action of the game the user can either call in sim_x_games and pass in 1 or directly call the sim_one_game	function as such:
-sim_one_game(playerList, 1)
+#Simulating One Game
+To simulate a single game and receive a play-by-play of every action, call the sim_one_game function and pass in a list of players. For example: sim_one_game(playerList, 1).
 
-If a user doesn’t wish to manually create players they can also call and pass in the dummy_player() function in place of the playerList
+If you don't wish to manually create players, you can also call the dummy_player function in place of the playerList.
 
-All ranges and values used to calculate reaction, memorization, and placing performances were done in relation to data collected on card memorization amounts, placing times, and reaction times of us and other players. This includes chances to slap, misslap, and memorize cards.
+##Methodology
+The ranges and values used to calculate the players' reaction, memorization, and placing skills were collected based on data gathered on card memorization amounts, placing times, and reaction times of the developers and other players. This includes chances to slap, misslap, and memorize cards.
+
+##Contributors
+This project was co-developed by Joshua Medvinsky and Daniel Penkov
